@@ -1,0 +1,130 @@
+[
+  {
+    "id": 1,
+    "slug": "timelords",
+    "name": "Les Timelords",
+    "number": "Maison 1",
+    "tagline": "« Nous optimisons le présent, avec la mémoire du passé et la vision du futur. »",
+    "color": "#4da3ff",
+    "colorSecondary": "#8fa3b8",
+    "colorDark": "#0b1622",
+    "borderGlow": "rgba(77, 163, 255, 0.5)",
+    "accentBadge": "bg-sky-500/20 text-sky-400 border-sky-500/30",
+    "themes": [
+      "DevOps",
+      "Systèmes",
+      "Infrastructure",
+      "Automatisation",
+      "CI/CD"
+    ],
+    "values": [
+      "Anticipation",
+      "Efficacité",
+      "Résilience",
+      "Maîtrise du temps"
+    ],
+    "archetype": "Le garant du bon fonctionnement. Il orchestre les rouages du système pour livrer au bon moment.",
+    "artefact": {
+      "name": "La Chronosphère",
+      "desc": "Métronome du système, capable de rejouer les logs et d'optimiser les exécutions passées."
+    },
+    "poster": "/assets/houses/timelords_poster.webp",
+    "banner": "/assets/houses/timelords_banner.webp"
+  },
+  {
+    "id": 2,
+    "slug": "gatekeepers",
+    "name": "Les Gatekeepers",
+    "number": "Maison 2",
+    "tagline": "« Rien n’est verrouillé pour celui qui ose franchir le seuil. »",
+    "color": "#a855f7",
+    "colorSecondary": "#fb923c",
+    "colorDark": "#160b22",
+    "borderGlow": "rgba(168, 85, 247, 0.5)",
+    "accentBadge": "bg-purple-500/20 text-purple-400 border-purple-500/30",
+    "themes": [
+      "Cyber",
+      "Hacking",
+      "Reverse Engineering",
+      "Exploration du code",
+      "CTF"
+    ],
+    "values": [
+      "Curiosité",
+      "Audace",
+      "Transgression créative",
+      "Savoir caché"
+    ],
+    "archetype": "Le hacker créatif, qui trouve une faille dans chaque mur, et une vérité dans chaque ligne obscure.",
+    "artefact": {
+      "name": "La Clé Universelle",
+      "desc": "Capable d’ouvrir tout firewall ou décrypter toute réalité codée."
+    },
+    "poster": "/assets/houses/gatekeepers_poster.webp",
+    "banner": "/assets/houses/gatekeepers_banner.webp"
+  },
+  {
+    "id": 3,
+    "slug": "codecrafters",
+    "name": "The CodeCrafters",
+    "number": "Maison 3",
+    "tagline": "« C’est en cassant qu’on apprend à construire. »",
+    "color": "#a3e635",
+    "colorSecondary": "#facc15",
+    "colorDark": "#10180a",
+    "borderGlow": "rgba(163, 230, 53, 0.5)",
+    "accentBadge": "bg-lime-500/20 text-lime-400 border-lime-500/30",
+    "themes": [
+      "Développement logiciel",
+      "Architecture",
+      "Makers",
+      "Debug",
+      "IA générative"
+    ],
+    "values": [
+      "Expérimentation",
+      "Créativité",
+      "Prototypage",
+      "Droit à l’erreur"
+    ],
+    "archetype": "Le bâtisseur, qui apprend en cassant, qui teste, bricole, réinvente.",
+    "artefact": {
+      "name": "La Pioche Numérique",
+      "desc": "Outil ultime de debug et de création."
+    },
+    "poster": "/assets/houses/codecrafters_poster.webp",
+    "banner": "/assets/houses/codecrafters_banner.webp"
+  },
+  {
+    "id": 4,
+    "slug": "oracles",
+    "name": "The Oracles",
+    "number": "Maison 4",
+    "tagline": "« Voir les données, c’est comprendre le monde. »",
+    "color": "#ff5a5a",
+    "colorSecondary": "#9b2c2c",
+    "colorDark": "#140707",
+    "borderGlow": "rgba(255, 90, 90, 0.5)",
+    "accentBadge": "bg-red-500/20 text-red-400 border-red-500/30",
+    "themes": [
+      "Data science",
+      "IA",
+      "Algorithmie",
+      "Cyberéthique",
+      "Analyse"
+    ],
+    "values": [
+      "Lucidité",
+      "Analyse",
+      "Anticipation",
+      "Savoir responsable"
+    ],
+    "archetype": "L’analyste silencieux, qui observe, relie les données, et comprend l’invisible.",
+    "artefact": {
+      "name": "L’Œil du Nexus",
+      "desc": "Capteur omniscient des flux de données."
+    },
+    "poster": "/assets/houses/oracles_poster.webp",
+    "banner": "/assets/houses/oracles_banner.webp"
+  }
+]

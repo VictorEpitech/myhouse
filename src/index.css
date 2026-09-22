@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-timelord: #4da3ff;
+  --color-gatekeeper: #a855f7;
+  --color-codecrafter: #a3e635;
+  --color-oracle: #ff5a5a;
+}
+
+body {
+  margin: 0;
+  background-color: #070a10;
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(77, 163, 255, 0.08), transparent 40%),
+    radial-gradient(circle at 10% 40%, rgba(168, 85, 247, 0.06), transparent 35%),
+    radial-gradient(circle at 90% 70%, rgba(163, 230, 53, 0.05), transparent 35%),
+    radial-gradient(circle at 50% 100%, rgba(255, 90, 90, 0.06), transparent 40%);
+  background-attachment: fixed;
+  color: #f1f5f9;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  overflow-x: hidden;
+}
+
+.font-cyber {
+  font-family: 'Chakra Petch', 'JetBrains Mono', sans-serif;
+  letter-spacing: 0.04em;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Custom Cyberpunk Grids & Glows */
+.cyber-grid {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+}
+
+.glow-blue {
+  box-shadow: 0 0 35px -5px rgba(77, 163, 255, 0.35);
+}
+
+.glow-purple {
+  box-shadow: 0 0 35px -5px rgba(168, 85, 247, 0.35);
+}
+
+.glow-green {
+  box-shadow: 0 0 35px -5px rgba(163, 230, 53, 0.35);
+}
+
+.glow-red {
+  box-shadow: 0 0 35px -5px rgba(255, 90, 90, 0.35);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #090e17;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}

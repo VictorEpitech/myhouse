@@ -1,0 +1,1189 @@
+[
+  {
+    "id": 1,
+    "category": "Logique Pure",
+    "difficulty": "Énigme Logique",
+    "title": "L'Énigme des 3 Terminaux",
+    "scenario": "À l'entrée d'une salle machine, trois terminaux A, B et C affichent des messages. Un seul d'entre eux dit la vérité. Lequel dit la vérité ?",
+    "codeSnippet": "Terminal A : « Le Terminal B ment. »\nTerminal B : « Le Terminal C ment. »\nTerminal C : « Les terminaux A et B mentent tous les deux. »",
+    "correctOption": "a",
+    "options": [
+      {
+        "id": "a",
+        "house": "timelords",
+        "label": "Le Terminal A",
+        "text": "Le Terminal A dit la vérité (si C ment et B ment, A dit obligatoirement la vérité)."
+      },
+      {
+        "id": "b",
+        "house": "gatekeepers",
+        "label": "Le Terminal B",
+        "text": "Le Terminal B dit la vérité."
+      },
+      {
+        "id": "c",
+        "house": "codecrafters",
+        "label": "Le Terminal C",
+        "text": "Le Terminal C dit la vérité."
+      },
+      {
+        "id": "d",
+        "house": "oracles",
+        "label": "Impossible à déterminer",
+        "text": "Il est mathématiquement impossible de trancher."
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "category": "Histoire de l'Informatique",
+    "difficulty": "Culture Générale",
+    "title": "La Première Programmeuse de l'Histoire",
+    "scenario": "Qui est historiquement reconnue comme la toute première personne à avoir rédigé un algorithme informatique au 19e siècle (pour la machine de Babbage) ?",
+    "correctOption": "a",
+    "options": [
+      {
+        "id": "a",
+        "house": "codecrafters",
+        "label": "Ada Lovelace",
+        "text": "Ada Lovelace, mathématicienne et pionnière visionnaire du calcul moderne."
+      },
+      {
+        "id": "b",
+        "house": "gatekeepers",
+        "label": "Grace Hopper",
+        "text": "Grace Hopper, conceptrice du premier compilateur."
+      },
+      {
+        "id": "c",
+        "house": "timelords",
+        "label": "Margaret Hamilton",
+        "text": "Margaret Hamilton, directrice du logiciel de navigation du programme Apollo 11."
+      },
+      {
+        "id": "d",
+        "house": "oracles",
+        "label": "Joan Clarke",
+        "text": "Joan Clarke, cryptanalyste britannique de Bletchley Park."
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "category": "Cryptographie & Décodage",
+    "difficulty": "Énigme Secrète",
+    "title": "Le Message Intercepté sur le Réseau",
+    "scenario": "Un court message secret a été intercepté sur le Wi-Fi du campus. Chaque lettre a été décalée d'un cran dans l'alphabet (Code de César : B devient A, D devient C...). Quel mot apparaît en reculant chaque lettre de 1 rang ?",
+    "codeSnippet": "Message chiffré :  F - Q - J - U - F - D - I",
+    "correctOption": "a",
+    "options": [
+      {
+        "id": "a",
+        "house": "gatekeepers",
+        "label": "EPITECH",
+        "text": "Le mot décodé est EPITECH (F->E, Q->P, J->I, U->T, F->E, D->C, I->H)."
+      },
+      {
+        "id": "b",
+        "house": "codecrafters",
+        "label": "MOULINS",
+        "text": "Le mot décodé est MOULINS."
+      },
+      {
+        "id": "c",
+        "house": "timelords",
+        "label": "HACKING",
+        "text": "Le mot décodé est HACKING."
+      },
+      {
+        "id": "d",
+        "house": "oracles",
+        "label": "CODEX01",
+        "text": "Le mot décodé est CODEX01."
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "category": "Méthode de Résolution",
+    "difficulty": "Mise en Situation",
+    "title": "Face à un Bug Bloquant",
+    "scenario": "Il est 22h30, vous travaillez sur un exercice de programmation depuis 2 heures. Un bug bloque votre avancement sans message d'erreur explicite. Quel est votre premier réflexe ?",
+    "correctOption": null,
+    "options": [
+      {
+        "id": "a",
+        "house": "timelords",
+        "label": "Tracer l'exécution pas à pas",
+        "text": "J'ajoute des affichages à chaque étape du programme pour repérer exactement à quel moment et sur quelle variable l'erreur se produit."
+      },
+      {
+        "id": "b",
+        "house": "gatekeepers",
+        "label": "Prendre du recul & changer d'approche",
+        "text": "Je fais une pause de 10 minutes loin de l'écran, puis je relis calmement mon code avec un œil neuf pour repérer l'anomalie."
+      },
+      {
+        "id": "c",
+        "house": "codecrafters",
+        "label": "Reconstruire la partie fautive",
+        "text": "J'isole la fonction défaillante dans un petit fichier de test séparé et je réécris la logique plus simplement jusqu'à ce que ça fonctionne."
+      },
+      {
+        "id": "d",
+        "house": "oracles",
+        "label": "Rechercher la cause mathématique",
+        "text": "Je pose sur papier les valeurs d'entrée et de sortie attendues pour vérifier la validité logique de ma condition d'arrêt."
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "category": "Binaire & Données",
+    "difficulty": "Culture Informatique",
+    "title": "La Capacité d'un Octet (Byte)",
+    "scenario": "En informatique, combien de valeurs numériques différentes peut-on coder avec exactement un octet (soit 8 bits) ?",
+    "correctOption": "b",
+    "options": [
+      {
+        "id": "a",
+        "house": "timelords",
+        "label": "128 valeurs (de 0 à 127)",
+        "text": "128 valeurs possibles."
+      },
+      {
+        "id": "b",
+        "house": "oracles",
+        "label": "256 valeurs (de 0 à 255)",
+        "text": "256 valeurs possibles (car 2^8 = 256)."
+      },
+      {
+        "id": "c",
+        "house": "codecrafters",
+        "label": "64 valeurs (de 0 à 63)",
+        "text": "64 valeurs possibles."
+      },
+      {
+        "id": "d",
+        "house": "gatekeepers",
+        "label": "1024 valeurs (de 0 à 1023)",
+        "text": "1024 valeurs possibles."
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "category": "Réseaux & Internet",
+    "difficulty": "Culture Web",
+    "title": "La Boussole d'Internet",
+    "scenario": "Lorsque vous tapez l'adresse d'un site web dans votre navigateur (par exemple `codex.techmoulins.fr`), quel service essentiel traduit ce nom en adresse IP numérique ?",
+    "correctOption": "c",
+    "options": [
+      {
+        "id": "a",
+        "house": "gatekeepers",
+        "label": "Le protocole HTTPS",
+        "text": "Le protocole HTTPS (HyperText Transfer Protocol Secure)."
+      },
+      {
+        "id": "b",
+        "house": "codecrafters",
+        "label": "Le serveur DHCP",
+        "text": "Le serveur DHCP (Dynamic Host Configuration Protocol)."
+      },
+      {
+        "id": "c",
+        "house": "timelords",
+        "label": "Le serveur DNS",
+        "text": "Le serveur DNS (Domain Name System), véritable annuaire d'Internet."
+      },
+      {
+        "id": "d",
+        "house": "oracles",
+        "label": "Le pare-feu (Firewall)",
+        "text": "Le pare-feu de protection réseau."
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "category": "Projets & Créativité",
+    "difficulty": "Préférences Personnelles",
+    "title": "Votre Projet de Rêve",
+    "scenario": "Si vous deviez consacrer un week-end entier à concevoir un projet informatique libre de votre choix durant votre première année, que choisiriez-vous ?",
+    "correctOption": null,
+    "options": [
+      {
+        "id": "a",
+        "house": "codecrafters",
+        "label": "Un mini-jeu vidéo indépendant",
+        "text": "Programmer un jeu 2D avec ses mécaniques de déplacement, ses graphismes et sa musique."
+      },
+      {
+        "id": "b",
+        "house": "timelords",
+        "label": "Un bot d'automatisation utile",
+        "text": "Créer un bot Discord ou un script qui automatise des tâches répétitives pour un groupe d'amis."
+      },
+      {
+        "id": "c",
+        "house": "gatekeepers",
+        "label": "Résoudre des défis de cybersécurité / CTF",
+        "text": "Participer à des épreuves de hacking éthique en ligne et trouver des drapeaux cachés (CTF)."
+      },
+      {
+        "id": "d",
+        "house": "oracles",
+        "label": "Un tableau de bord de statistiques interactif",
+        "text": "Développer un outil qui récupère des données du web pour afficher des graphiques et faire des prédictions."
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "category": "Matériel & Dépannage",
+    "difficulty": "Pratique Hardware",
+    "title": "L'Écran Noir du PC",
+    "scenario": "Vous allumez un ordinateur de bureau : les ventilateurs se mettent à tourner, mais l'écran affiche désespérément « Aucun signal ». Quelle est la première vérification élémentaire à faire ?",
+    "correctOption": "a",
+    "options": [
+      {
+        "id": "a",
+        "house": "codecrafters",
+        "label": "Vérifier le branchement du câble écran",
+        "text": "Vérifier que le câble HDMI/DisplayPort est bien branché sur la carte graphique dédiée et non sur le port vidéo de la carte mère."
+      },
+      {
+        "id": "b",
+        "house": "timelords",
+        "label": "Réinstaller le système d'exploitation",
+        "text": "Formater et réinstaller Windows ou Linux avec une clé USB."
+      },
+      {
+        "id": "c",
+        "house": "oracles",
+        "label": "Remplacer l'alimentation électrique",
+        "text": "Changer immédiatement le bloc d'alimentation du boîtier."
+      },
+      {
+        "id": "d",
+        "house": "gatekeepers",
+        "label": "Flasher le BIOS de la carte mère",
+        "text": "Mettre à jour le firmware du BIOS en court-circuitant le cavalier CMOS."
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "category": "Algorithmique & Suites",
+    "difficulty": "Logique Mathématique",
+    "title": "La Puissance des Bits",
+    "scenario": "Dans un système binaire, les capacités mémoires suivent une progression géométrique : 1, 2, 4, 8, 16, 32, 64... Quel est le 8ème nombre de cette suite ?",
+    "correctOption": "c",
+    "options": [
+      {
+        "id": "a",
+        "house": "timelords",
+        "label": "100",
+        "text": "100"
+      },
+      {
+        "id": "b",
+        "house": "gatekeepers",
+        "label": "120",
+        "text": "120"
+      },
+      {
+        "id": "c",
+        "house": "oracles",
+        "label": "128",
+        "text": "128 (car 64 x 2 = 128, soit 2^7)"
+      },
+      {
+        "id": "d",
+        "house": "codecrafters",
+        "label": "256",
+        "text": "256"
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "category": "Travail en Équipe",
+    "difficulty": "Rôle dans le Groupe",
+    "title": "Votre Contribution en Projet",
+    "scenario": "Lors d'un projet de groupe à Epitech, dans quel domaine apportez-vous le plus naturellement votre valeur ajoutée ?",
+    "correctOption": null,
+    "options": [
+      {
+        "id": "a",
+        "house": "timelords",
+        "label": "Organisation & Rigueur",
+        "text": "Veiller au planning, synchroniser les parties de chacun et m'assurer que le rendu final est livré sans retard."
+      },
+      {
+        "id": "b",
+        "house": "gatekeepers",
+        "label": "Test & Détection de Failles",
+        "text": "Tester le projet sous tous les angles, trouver les cas limites où le programme plante avant que le correcteur ne le voie."
+      },
+      {
+        "id": "c",
+        "house": "codecrafters",
+        "label": "Développement & Finition",
+        "text": "M'investir à fond dans l'écriture du code, soigner la structure et veiller à ce que l'application soit agréable à utiliser."
+      },
+      {
+        "id": "d",
+        "house": "oracles",
+        "label": "Logique & Architecture",
+        "text": "Modéliser la solution sur papier, décomposer le problème en algorithmes clairs et m'assurer de la cohérence globale."
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "category": "Culture Système & Linux",
+    "difficulty": "Culture Informatique",
+    "title": "La Mascotte du Monde Libre",
+    "scenario": "Quel animal célèbre sert d'emblème et de mascotte au système d'exploitation libre Linux créé par Linus Torvalds ?",
+    "correctOption": "b",
+    "options": [
+      {
+        "id": "a",
+        "house": "gatekeepers",
+        "label": "Un renard de feu",
+        "text": "Un renard roux stylisé."
+      },
+      {
+        "id": "b",
+        "house": "timelords",
+        "label": "Un manchot nommé Tux",
+        "text": "Un manchot assis nommé Tux."
+      },
+      {
+        "id": "c",
+        "house": "codecrafters",
+        "label": "Un gnou africain",
+        "text": "Un gnou aux cornes recourbées (projet GNU)."
+      },
+      {
+        "id": "d",
+        "house": "oracles",
+        "label": "Un caméléon vert",
+        "text": "Un caméléon (mascotte d'openSUSE)."
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "category": "Algorithmique Pratique",
+    "difficulty": "Énigme Logique",
+    "title": "Le Jeu du Nombre Mystère (Dichotomie)",
+    "scenario": "Votre ami choisit secrètement un nombre entier entre 1 et 100. À chaque tentative, il vous dit uniquement si son nombre est « plus grand » ou « plus petit ». En procédant de manière optimale, combien de questions maximum suffisent pour trouver le nombre à coup sûr ?",
+    "correctOption": "b",
+    "options": [
+      {
+        "id": "a",
+        "house": "gatekeepers",
+        "label": "50 questions",
+        "text": "50 questions."
+      },
+      {
+        "id": "b",
+        "house": "oracles",
+        "label": "7 questions",
+        "text": "7 questions maximum (car 2^7 = 128 > 100, par recherche dichotomique en divisant par deux)."
+      },
+      {
+        "id": "c",
+        "house": "codecrafters",
+        "label": "10 questions",
+        "text": "10 questions (une pour chaque dizaine)."
+      },
+      {
+        "id": "d",
+        "house": "timelords",
+        "label": "25 questions",
+        "text": "25 questions."
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "category": "Sécurité & Bonnes Pratiques",
+    "difficulty": "Cybersécurité Accessible",
+    "title": "Le Mot de Passe le Plus Robuste",
+    "scenario": "D'après les spécialistes de la cybersécurité, lequel de ces mots de passe résiste le mieux aux attaques par dictionnaire et force brute ?",
+    "correctOption": "c",
+    "options": [
+      {
+        "id": "a",
+        "house": "timelords",
+        "label": "« Epitech2024! »",
+        "text": "Un mot simple avec une majuscule, une année et un point d'exclamation."
+      },
+      {
+        "id": "b",
+        "house": "gatekeepers",
+        "label": "« P@$$w0rd »",
+        "text": "Un mot court avec substitution de lettres par des symboles usuels."
+      },
+      {
+        "id": "c",
+        "house": "codecrafters",
+        "label": "« baleine-guitare-volcan-fusil-bleu »",
+        "text": "Une phrase secrète longue composée de plusieurs mots aléatoires sans lien (passphrase)."
+      },
+      {
+        "id": "d",
+        "house": "oracles",
+        "label": "« 123456789 »",
+        "text": "Une suite de 9 chiffres consécutifs."
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "category": "Hardware & Composants",
+    "difficulty": "Culture Informatique",
+    "title": "La Mémoire Volatile vs Permanente",
+    "scenario": "Lorsque vous éteignez complètement votre ordinateur, laquelle de ces mémoires perd instantanément l'intégralité des données qu'elle contenait ?",
+    "correctOption": "a",
+    "options": [
+      {
+        "id": "a",
+        "house": "timelords",
+        "label": "La mémoire vive (RAM)",
+        "text": "La mémoire vive (RAM - Random Access Memory), qui nécessite une alimentation continue."
+      },
+      {
+        "id": "b",
+        "house": "codecrafters",
+        "label": "Le disque SSD NVMe",
+        "text": "Le disque de stockage SSD."
+      },
+      {
+        "id": "c",
+        "house": "oracles",
+        "label": "La clé USB",
+        "text": "La clé USB flash."
+      },
+      {
+        "id": "d",
+        "house": "gatekeepers",
+        "label": "La puce ROM du BIOS",
+        "text": "La mémoire morte (ROM)."
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "category": "Histoire des Jeux & Technologies",
+    "difficulty": "Culture Geek",
+    "title": "L'Origine du Mot « Bug »",
+    "scenario": "D'où vient l'expression informatique moderne « un bug » pour désigner une erreur de programme ?",
+    "correctOption": "b",
+    "options": [
+      {
+        "id": "a",
+        "house": "timelords",
+        "label": "D'un mot allemand signifiant 'pliure'",
+        "text": "Du mot allemand signifiant une pliure dans une carte perforée."
+      },
+      {
+        "id": "b",
+        "house": "gatekeepers",
+        "label": "D'un papillon de nuit coincé dans un relais",
+        "text": "D'un vrai papillon de nuit (insecte / moth) découvert coincé dans un relais de l'ordinateur Mark II en 1947 par Grace Hopper."
+      },
+      {
+        "id": "c",
+        "house": "codecrafters",
+        "label": "Du cri d'un joueur d'échecs mécanique",
+        "text": "Du cri mécanique d'une machine d'échecs truquée."
+      },
+      {
+        "id": "d",
+        "house": "oracles",
+        "label": "D'une abréviation militaire américaine",
+        "text": "D'un acronyme militaire signifiant 'Binary Unit Glitch'."
+      }
+    ]
+  },
+  {
+    "id": 16,
+    "category": "Logique Binaire",
+    "difficulty": "Énigme Technique",
+    "title": "L'Interrupteur Inversé (Porte Logique)",
+    "scenario": "Dans un circuit informatique, une porte logique 'OU EXCLUSIF' (XOR) renvoie la valeur 1 (VRAI) uniquement si exactement UNE SEULE de ses deux entrées vaut 1. Si l'entrée A vaut 1 et l'entrée B vaut 1, que vaut la sortie ?",
+    "correctOption": "a",
+    "options": [
+      {
+        "id": "a",
+        "house": "gatekeepers",
+        "label": "0 (FAUX)",
+        "text": "0 (car les deux entrées sont vraies en même temps, ce qui est exclu par le XOR)."
+      },
+      {
+        "id": "b",
+        "house": "timelords",
+        "label": "1 (VRAI)",
+        "text": "1 (la condition est satisfaite)."
+      },
+      {
+        "id": "c",
+        "house": "codecrafters",
+        "label": "Indéterminé",
+        "text": "La porte logique oscille entre 0 et 1."
+      },
+      {
+        "id": "d",
+        "house": "oracles",
+        "label": "-1",
+        "text": "-1."
+      }
+    ]
+  },
+  {
+    "id": 17,
+    "category": "Méthodologie & Curiosité",
+    "difficulty": "Mise en Situation",
+    "title": "La Découverte d'un Nouvel Outil",
+    "scenario": "On vous présente un tout nouveau logiciel ou une nouvelle technologie en début de projet. Comment préférez-vous l'aborder ?",
+    "correctOption": null,
+    "options": [
+      {
+        "id": "a",
+        "house": "codecrafters",
+        "label": "Tester en fabriquant un exemple concret",
+        "text": "Créer directement un petit projet de test pour voir concrètement comment les briques s'assemblent."
+      },
+      {
+        "id": "b",
+        "house": "gatekeepers",
+        "label": "Pousser le logiciel dans ses retranchements",
+        "text": "Essayer des raccourcis non prévus et tester les limites pour voir où il résiste et où il plante."
+      },
+      {
+        "id": "c",
+        "house": "timelords",
+        "label": "Consulter la documentation et les raccourcis",
+        "text": "Parcourir la documentation officielle pour maîtriser immédiatement les bonnes pratiques et gagner du temps."
+      },
+      {
+        "id": "d",
+        "house": "oracles",
+        "label": "Comprendre l'architecture et les principes",
+        "text": "Comprendre comment l'outil est conçu sous le capot et pourquoi ses créateurs ont fait ces choix techniques."
+      }
+    ]
+  },
+  {
+    "id": 18,
+    "category": "Culture Web & Internet",
+    "difficulty": "Culture Informatique",
+    "title": "L'Inventeur du World Wide Web",
+    "scenario": "À qui doit-on l'invention du World Wide Web (WWW), des liens hypertextes et du protocole HTTP au CERN en 1989 ?",
+    "correctOption": "b",
+    "options": [
+      {
+        "id": "a",
+        "house": "timelords",
+        "label": "Steve Jobs",
+        "text": "Steve Jobs, cofondateur d'Apple."
+      },
+      {
+        "id": "b",
+        "house": "codecrafters",
+        "label": "Tim Berners-Lee",
+        "text": "Tim Berners-Lee, physicien et informaticien britannique."
+      },
+      {
+        "id": "c",
+        "house": "gatekeepers",
+        "label": "Bill Gates",
+        "text": "Bill Gates, fondateur de Microsoft."
+      },
+      {
+        "id": "d",
+        "house": "oracles",
+        "label": "Mark Zuckerberg",
+        "text": "Mark Zuckerberg, créateur de Facebook."
+      }
+    ]
+  },
+  {
+    "id": 19,
+    "category": "Algorithmique Intuitive",
+    "difficulty": "Logique Pratique",
+    "title": "Le Tri de Cartes à Jouer",
+    "scenario": "Vous tenez un paquet de cartes désordonnées dans vos mains. Pour les ranger de la plus petite à la plus grande, vous prenez chaque carte une par une et vous l'insérez à la bonne place parmi celles déjà triées. De quel algorithme classique s'agit-il ?",
+    "correctOption": "c",
+    "options": [
+      {
+        "id": "a",
+        "house": "timelords",
+        "label": "Le tri à bulles (Bubble Sort)",
+        "text": "Le tri à bulles."
+      },
+      {
+        "id": "b",
+        "house": "oracles",
+        "label": "Le tri rapide (QuickSort)",
+        "text": "Le tri rapide."
+      },
+      {
+        "id": "c",
+        "house": "codecrafters",
+        "label": "Le tri par insertion (Insertion Sort)",
+        "text": "Le tri par insertion, méthode la plus naturelle utilisée par les humains."
+      },
+      {
+        "id": "d",
+        "house": "gatekeepers",
+        "label": "Le tri par sélection (Selection Sort)",
+        "text": "Le tri par sélection."
+      }
+    ]
+  },
+  {
+    "id": 20,
+    "category": "Vision & Ambition Epitech",
+    "difficulty": "Fin de Parcours",
+    "title": "Votre But Ultime à Epitech",
+    "scenario": "Durant vos 5 années sur le campus d'Epitech Moulins, quelle réussite personnelle vous rendrait le plus fier ?",
+    "correctOption": null,
+    "options": [
+      {
+        "id": "a",
+        "house": "timelords",
+        "label": "La régularité & l'efficacité sans faille",
+        "text": "Avoir validé chaque projet dans les temps, avec rigueur et sans jamais me laisser déborder par le stress."
+      },
+      {
+        "id": "b",
+        "house": "gatekeepers",
+        "label": "L'expertise technique & l'ingéniosité",
+        "text": "Devenir la personne de référence capable de débloquer n'importe quelle situation complexe et de trouver la solution cachée."
+      },
+      {
+        "id": "c",
+        "house": "codecrafters",
+        "label": "L'aboutissement de projets marquants",
+        "text": "Avoir créé des applications ou des jeux vidéo complets, fonctionnels et admirés par mes camarades et l'industrie."
+      },
+      {
+        "id": "d",
+        "house": "oracles",
+        "label": "La compréhension profonde des sciences informatiques",
+        "text": "Maîtriser les technologies de pointe (IA, algorithmes avancés) et être capable d'anticiper les grandes révolutions de demain."
+      }
+    ]
+  },
+  {
+    "id": 21,
+    "category": "Culture Open Source & Code",
+    "difficulty": "Culture Informatique",
+    "title": "L'Outil Mondial de Gestion de Versions",
+    "scenario": "Quel outil créé en 2005 par Linus Torvalds permet aux développeurs du monde entier de sauvegarder l'historique complet de leur code et de collaborer sans écraser le travail des autres ?",
+    "correctOption": "a",
+    "options": [
+      {
+        "id": "a",
+        "house": "timelords",
+        "label": "Git",
+        "text": "Git, le système de contrôle de versions décentralisé."
+      },
+      {
+        "id": "b",
+        "house": "gatekeepers",
+        "label": "Docker",
+        "text": "Docker, le gestionnaire de conteneurs applicatifs."
+      },
+      {
+        "id": "c",
+        "house": "codecrafters",
+        "label": "Npm",
+        "text": "Npm, le gestionnaire de paquets JavaScript."
+      },
+      {
+        "id": "d",
+        "house": "oracles",
+        "label": "Apache",
+        "text": "Apache, le serveur web HTTP."
+      }
+    ]
+  },
+  {
+    "id": 22,
+    "category": "Logique des Conditions",
+    "difficulty": "Énigme Logique",
+    "title": "Le Test de Conditionnelle",
+    "scenario": "Dans un programme, vous avez la règle d'accès suivante : `SI (age >= 18 ET permis == VRAI) OU (conduite_accompagnee == VRAI)`. Dans laquelle de ces 4 situations la condition est-elle FAUSSE ?",
+    "correctOption": "b",
+    "options": [
+      {
+        "id": "a",
+        "house": "timelords",
+        "label": "Âge = 16 ans, Permis = Faux, Conduite accompagnée = Vrai",
+        "text": "La condition est VRAIE grâce à la conduite accompagnée."
+      },
+      {
+        "id": "b",
+        "house": "gatekeepers",
+        "label": "Âge = 17 ans, Permis = Vrai, Conduite accompagnée = Faux",
+        "text": "La condition est FAUSSE (l'âge est inférieur à 18 et il n'y a pas de conduite accompagnée)."
+      },
+      {
+        "id": "c",
+        "house": "codecrafters",
+        "label": "Âge = 19 ans, Permis = Vrai, Conduite accompagnée = Faux",
+        "text": "La condition est VRAIE (majeur avec permis valide)."
+      },
+      {
+        "id": "d",
+        "house": "oracles",
+        "label": "Âge = 22 ans, Permis = Vrai, Conduite accompagnée = Vrai",
+        "text": "La condition est VRAIE (toutes les conditions sont remplies)."
+      }
+    ]
+  },
+  {
+    "id": 23,
+    "category": "Cybersécurité Pratique",
+    "difficulty": "Sensibilisation Réflexe",
+    "title": "L'Email Suspect du 'Support'",
+    "scenario": "Vous recevez un email alarmant d'une adresse `admin-epitech-verification.xyz` vous ordonnant de cliquer sur un lien pour ressaisir votre mot de passe sous 2 heures, sous peine de radiation. Quel est le réflexe absolu ?",
+    "correctOption": "b",
+    "options": [
+      {
+        "id": "a",
+        "house": "timelords",
+        "label": "Cliquer immédiatement pour éviter tout blocage",
+        "text": "Cliquer tout de suite pour ne pas risquer de perdre mes accès d'étudiant."
+      },
+      {
+        "id": "b",
+        "house": "gatekeepers",
+        "label": "Ne pas cliquer et signaler la tentative de Phishing",
+        "text": "Ne jamais cliquer sur le lien, vérifier le nom de domaine frauduleux et alerter l'équipe pédagogique."
+      },
+      {
+        "id": "c",
+        "house": "codecrafters",
+        "label": "Répondre à l'email avec un mot de passe bidon",
+        "text": "Répondre au mail avec des insultes ou de fausses informations."
+      },
+      {
+        "id": "d",
+        "house": "oracles",
+        "label": "Transférer l'email à tous mes camarades",
+        "text": "Transférer l'email à toute la promotion sans prévenir les modérateurs."
+      }
+    ]
+  },
+  {
+    "id": 24,
+    "category": "Histoire du Jeu Vidéo",
+    "difficulty": "Culture Geek",
+    "title": "La Première Icône du Jeu Vidéo",
+    "scenario": "Quel jeu d'arcade mythique sorti en 1972 par Atari, composé simplement de deux barres verticales renvoyant une balle carrée, a lancé l'industrie mondiale du jeu vidéo ?",
+    "correctOption": "a",
+    "options": [
+      {
+        "id": "a",
+        "house": "codecrafters",
+        "label": "Pong",
+        "text": "Pong, développé par Allan Alcorn et commercialisé par Nolan Bushnell."
+      },
+      {
+        "id": "b",
+        "house": "timelords",
+        "label": "Space Invaders",
+        "text": "Space Invaders de Taito."
+      },
+      {
+        "id": "c",
+        "house": "gatekeepers",
+        "label": "Pac-Man",
+        "text": "Pac-Man de Namco."
+      },
+      {
+        "id": "d",
+        "house": "oracles",
+        "label": "Tetris",
+        "text": "Tetris d'Alekseï Pajitnov."
+      }
+    ]
+  },
+  {
+    "id": 25,
+    "category": "Matériel & Connectique",
+    "difficulty": "Hardware Pratique",
+    "title": "Le Câble Réseau Filiaire",
+    "scenario": "Quel câble avec un connecteur à cliquet en plastique appelé RJ45 permet de brancher un ordinateur directement à une prise réseau pour une connexion stable et sans latence ?",
+    "correctOption": "a",
+    "options": [
+      {
+        "id": "a",
+        "house": "timelords",
+        "label": "Un câble Ethernet (RJ45)",
+        "text": "Le câble Ethernet (catégorie 5e, 6 ou 7)."
+      },
+      {
+        "id": "b",
+        "house": "gatekeepers",
+        "label": "Un câble HDMI",
+        "text": "Le câble vidéo haute définition HDMI."
+      },
+      {
+        "id": "c",
+        "house": "codecrafters",
+        "label": "Un câble VGA",
+        "text": "L'ancien câble vidéo analogique VGA bleu."
+      },
+      {
+        "id": "d",
+        "house": "oracles",
+        "label": "Un câble d'alimentation secteur",
+        "text": "Le cordon électrique d'alimentation."
+      }
+    ]
+  },
+  {
+    "id": 26,
+    "category": "Algorithmique Quotidienne",
+    "difficulty": "Logique & Rangement",
+    "title": "La Recherche dans le Dictionnaire",
+    "scenario": "Vous cherchez le mot 'Pixel' dans un dictionnaire papier de 1 000 pages. Quelle méthode vous permet d'atteindre la bonne page le plus rapidement possible ?",
+    "correctOption": "a",
+    "options": [
+      {
+        "id": "a",
+        "house": "oracles",
+        "label": "Ouvrir au milieu et couper en deux (Dichotomie)",
+        "text": "Ouvrir au milieu : si 'Pixel' est après, j'ouvre au milieu de la seconde moitié, éliminant 50% des pages à chaque fois."
+      },
+      {
+        "id": "b",
+        "house": "timelords",
+        "label": "Feuilleter page après page depuis la page 1",
+        "text": "Tourner les pages une par une depuis le début jusqu'à atteindre la lettre P."
+      },
+      {
+        "id": "c",
+        "house": "gatekeepers",
+        "label": "Ouvrir des pages au hasard",
+        "text": "Piocher des pages aléatoirement jusqu'à tomber sur la lettre P."
+      },
+      {
+        "id": "d",
+        "house": "codecrafters",
+        "label": "Partir de la dernière page et remonter",
+        "text": "Commencer à la lettre Z et remonter le dictionnaire à l'envers."
+      }
+    ]
+  },
+  {
+    "id": 27,
+    "category": "Langages du Web",
+    "difficulty": "Culture Web",
+    "title": "La Peinture d'une Page Web",
+    "scenario": "Dans la création d'un site internet, quel langage spécifique est chargé de définir les couleurs, la disposition, les polices et les animations visuelles ?",
+    "correctOption": "a",
+    "options": [
+      {
+        "id": "a",
+        "house": "codecrafters",
+        "label": "Le CSS (Cascading Style Sheets)",
+        "text": "Le langage CSS, qui gère toute la présentation graphique."
+      },
+      {
+        "id": "b",
+        "house": "timelords",
+        "label": "Le SQL",
+        "text": "Le langage de base de données relationnelle SQL."
+      },
+      {
+        "id": "c",
+        "house": "gatekeepers",
+        "label": "Le C++",
+        "text": "Le langage système C++."
+      },
+      {
+        "id": "d",
+        "house": "oracles",
+        "label": "Le JSON",
+        "text": "Le format d'échange de données JSON."
+      }
+    ]
+  },
+  {
+    "id": 28,
+    "category": "Terminal & Commandes",
+    "difficulty": "Culture Linux/Unix",
+    "title": "La Commande de Base du Terminal",
+    "scenario": "Dans un terminal Linux ou macOS, quelle est la commande courte de 2 lettres la plus utilisée pour lister tous les fichiers présents dans le dossier où vous vous trouvez ?",
+    "correctOption": "a",
+    "options": [
+      {
+        "id": "a",
+        "house": "timelords",
+        "label": "ls (List)",
+        "text": "La commande `ls` (abréviation de 'list')."
+      },
+      {
+        "id": "b",
+        "house": "gatekeepers",
+        "label": "cd (Change Directory)",
+        "text": "La commande `cd` pour changer de dossier."
+      },
+      {
+        "id": "c",
+        "house": "codecrafters",
+        "label": "rm (Remove)",
+        "text": "La commande `rm` pour supprimer un fichier."
+      },
+      {
+        "id": "d",
+        "house": "oracles",
+        "label": "cp (Copy)",
+        "text": "La commande `cp` pour dupliquer un fichier."
+      }
+    ]
+  },
+  {
+    "id": 29,
+    "category": "Mathématique & Progression",
+    "difficulty": "Énigme Logique",
+    "title": "L'Étang aux Nénuphars Magiques",
+    "scenario": "Un nénuphar sur un étang double de surface chaque jour. Au 30ème jour, il recouvre exactement la totalité de l'étang. À quel jour recouvrait-il exactement la moitié de l'étang ?",
+    "correctOption": "b",
+    "options": [
+      {
+        "id": "a",
+        "house": "timelords",
+        "label": "Au 15ème jour",
+        "text": "Au 15ème jour (moitié de 30)."
+      },
+      {
+        "id": "b",
+        "house": "oracles",
+        "label": "Au 29ème jour",
+        "text": "Au 29ème jour (puisqu'il double le lendemain pour couvrir 100% de l'étang au 30ème jour !)."
+      },
+      {
+        "id": "c",
+        "house": "gatekeepers",
+        "label": "Au 20ème jour",
+        "text": "Au 20ème jour."
+      },
+      {
+        "id": "d",
+        "house": "codecrafters",
+        "label": "Au 28ème jour",
+        "text": "Au 28ème jour."
+      }
+    ]
+  },
+  {
+    "id": 30,
+    "category": "Pédagogie Epitech & Peer-Learning",
+    "difficulty": "Esprit du Campus",
+    "title": "L'Entraide et l'Apprentissage Actif",
+    "scenario": "À Epitech, la méthode pédagogique repose sur le 'peer-learning' (l'apprentissage entre pairs). Face à un concept difficile que vous ne comprenez pas encore, quelle est la meilleure démarche ?",
+    "correctOption": "b",
+    "options": [
+      {
+        "id": "a",
+        "house": "gatekeepers",
+        "label": "Attendre que le corrigé tombe sans rien tenter",
+        "text": "Rester silencieux et attendre la fin de journée."
+      },
+      {
+        "id": "b",
+        "house": "codecrafters",
+        "label": "Tester par soi-même puis débattre avec ses camarades",
+        "text": "Lire la documentation, essayer plusieurs codes de test, puis confronter mes hypothèses avec un camarade pour comprendre ensemble le mécanisme."
+      },
+      {
+        "id": "c",
+        "house": "timelords",
+        "label": "Recopier le code d'un autre sans chercher à comprendre",
+        "text": "Copier-coller le travail d'autrui pour avoir une note rapide."
+      },
+      {
+        "id": "d",
+        "house": "oracles",
+        "label": "Changer d'exercice et abandonner le sujet",
+        "text": "Laisser tomber dès la première difficulté rencontrée."
+      }
+    ]
+  },
+  {
+    "id": 31,
+    "category": "Méthodologie & Organisation",
+    "difficulty": "Profil d'Ingénieur",
+    "title": "La Gestion du Calendrier de Projet",
+    "scenario": "Un projet d'équipe doit être rendu dans 14 jours. Quelle est votre façon spontanée d'aborder le calendrier ?",
+    "options": [
+      {
+        "id": "a",
+        "house": "timelords",
+        "label": "Planifier des jalons stricts à l'avance",
+        "text": "Découper le projet en étapes hebdomadaires avec des dates limites fermes pour finaliser 48 heures avant la deadline."
+      },
+      {
+        "id": "b",
+        "house": "gatekeepers",
+        "label": "Sécuriser le cadre et la structure Git",
+        "text": "Mettre en place des règles strictes de commits, des revues de code et s'assurer que personne ne casse la branche principale."
+      },
+      {
+        "id": "c",
+        "house": "codecrafters",
+        "label": "Coder un prototype immédiat et itérer",
+        "text": "Créer une première version fonctionnelle dès le premier jour, tester directement et enrichir pas à pas."
+      },
+      {
+        "id": "d",
+        "house": "oracles",
+        "label": "Concevoir l'architecture avant de coder",
+        "text": "Analyser en profondeur le sujet, modéliser les structures de données et anticiper les cas limites avant la première ligne."
+      }
+    ]
+  },
+  {
+    "id": 32,
+    "category": "Environnement & Ergonomie",
+    "difficulty": "Profil d'Ingénieur",
+    "title": "La Configuration de votre Espace de Travail",
+    "scenario": "Pour une longue session intensive de code sur le campus d'Epitech Moulins, quel environnement préférez-vous ?",
+    "options": [
+      {
+        "id": "a",
+        "house": "timelords",
+        "label": "Chronomètre, méthode Pomodoro et to-do list",
+        "text": "Une gestion millimétrée du temps de travail avec des pauses cadencées pour maintenir un rythme soutenu et régulier."
+      },
+      {
+        "id": "b",
+        "house": "gatekeepers",
+        "label": "Environnement sécurisé, sauvegardé et épuré",
+        "text": "Dépôts versionnés à chaque étape, terminal configuré sans distraction et sauvegardes chiffrées automatisées."
+      },
+      {
+        "id": "c",
+        "house": "codecrafters",
+        "label": "Clavier mécanique, double écran et éditeurs ouverts",
+        "text": "Un espace immersif où le code, les tests unitaires et la compilation tournent en direct à portée de main."
+      },
+      {
+        "id": "d",
+        "house": "oracles",
+        "label": "Schémas logiques, métriques et diagrammes d'architecture",
+        "text": "Un tableau blanc ou bloc-notes pour visualiser les flux de données et décortiquer la logique du problème."
+      }
+    ]
+  },
+  {
+    "id": 33,
+    "category": "Gestion du Stress & Débogage",
+    "difficulty": "Profil d'Ingénieur",
+    "title": "Le Bug Imprévu en Fin de Nuit",
+    "scenario": "À quelques heures du rendu, une fonctionnalité clé cesse de fonctionner sans explication apparente. Quel est votre premier réflexe ?",
+    "options": [
+      {
+        "id": "a",
+        "house": "timelords",
+        "label": "Évaluer le temps restant et prioriser l'essentiel",
+        "text": "Garder son sang-froid, recalculer la marge temporelle et isoler le périmètre minimum viable pour livrer à l'heure."
+      },
+      {
+        "id": "b",
+        "house": "gatekeepers",
+        "label": "Revenir au dernier commit stable et inspecter les logs",
+        "text": "Restaurer immédiatement un état sain garanti, comparer les modifications récentes et identifier la régression."
+      },
+      {
+        "id": "c",
+        "house": "codecrafters",
+        "label": "Déboguer directement dans le code à coup de tests",
+        "text": "Ajouter des affichages de contrôle ciblés, tester chaque fonction en profondeur et corriger le bug avec énergie."
+      },
+      {
+        "id": "d",
+        "house": "oracles",
+        "label": "Analyser les flux logiques pour trouver la cause racine",
+        "text": "Prendre du recul, relire la trace d'exécution et comprendre le comportement imprévu plutôt que d'appliquer un correctif à la hâte."
+      }
+    ]
+  },
+  {
+    "id": 34,
+    "category": "Dynamique d'Équipe & Hackathon",
+    "difficulty": "Profil d'Ingénieur",
+    "title": "Votre Rôle Naturel en Hackathon",
+    "scenario": "Votre équipe participe à un hackathon de 48 heures sans interruption. Dans quel rôle vous sentez-vous le plus utile et stimulé ?",
+    "options": [
+      {
+        "id": "a",
+        "house": "timelords",
+        "label": "Le stratège et coordinateur du temps",
+        "text": "Veiller au respect du timing, synchroniser les membres de l'équipe et préparer la soutenance finale sans panique."
+      },
+      {
+        "id": "b",
+        "house": "gatekeepers",
+        "label": "Le garant de la fiabilité et de la robustesse",
+        "text": "S'assurer que le projet ne plante pas, que le code est propre, stable et que les démos ne subiront aucun imprévu."
+      },
+      {
+        "id": "c",
+        "house": "codecrafters",
+        "label": "Le bâtisseur principal et moteur de production",
+        "text": "Implémenter les fonctionnalités clés, assembler les composants avec enthousiasme et faire fonctionner le produit."
+      },
+      {
+        "id": "d",
+        "house": "oracles",
+        "label": "Le concepteur de la logique et de l'algorithme central",
+        "text": "Imaginer la solution originale du problème, concevoir les formules clés et structurer les données du projet."
+      }
+    ]
+  },
+  {
+    "id": 35,
+    "category": "Philosophie & Vision du Code",
+    "difficulty": "Profil d'Ingénieur",
+    "title": "La Plus Grande Fierté d'un Développeur",
+    "scenario": "Parmi ces quatre sentiments, lequel vous procure la plus grande satisfaction personnelle lorsque vous développez ?",
+    "options": [
+      {
+        "id": "a",
+        "house": "timelords",
+        "label": "La maîtrise du cycle de vie et la ponctualité",
+        "text": "Voir un projet complexe aboutir exactement comme prévu, en respectant chaque étape d'une planification rigoureuse."
+      },
+      {
+        "id": "b",
+        "house": "gatekeepers",
+        "label": "La solidité et l'infaillibilité du système",
+        "text": "Construire un programme qui résiste à toutes les erreurs, gère chaque exception et ne tombe jamais en panne."
+      },
+      {
+        "id": "c",
+        "house": "codecrafters",
+        "label": "Le plaisir de créer un objet numérique de ses mains",
+        "text": "Partir d'un fichier vide et donner vie à une application interactive fonctionnelle grâce à son propre code."
+      },
+      {
+        "id": "d",
+        "house": "oracles",
+        "label": "La découverte de solutions élégantes et l'anticipation",
+        "text": "Comprendre des mécanismes logiques complexes et concevoir des algorithmes prédictifs efficaces."
+      }
+    ]
+  }
+]
