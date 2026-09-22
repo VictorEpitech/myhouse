@@ -1,21 +1,26 @@
 // Microsoft MSAL Configuration for Microsoft 365 (Epitech Office 365 SSO)
 
-const tenantId = import.meta.env.VITE_AZURE_TENANT_ID || "common";
-const authority = import.meta.env.VITE_AZURE_AUTHORITY || `https://login.microsoftonline.com/${tenantId}`;
-const redirectUri = import.meta.env.VITE_AZURE_REDIRECT_URI || (typeof window !== "undefined" ? window.location.origin : "/");
+export const createMsalConfig = (custom = {}) => {
+  const tenantId = custom.tenantId || import.meta.env.VITE_AZURE_TENANT_ID || "organizations";
+  const authority = custom.authority || import.meta.env.VITE_AZURE_AUTHORITY || `https://login.microsoftonline.com/${tenantId}`;
+  const redirectUri = custom.redirectUri || import.meta.env.VITE_AZURE_REDIRECT_URI || (typeof window !== "undefined" ? window.location.origin : "/");
+  const clientId = custom.clientId || import.meta.env.VITE_AZURE_CLIENT_ID || "00000000-0000-0000-0000-000000000000";
 
-export const msalConfig = {
-  auth: {
-    clientId: import.meta.env.VITE_AZURE_CLIENT_ID || "00000000-0000-0000-0000-000000000000",
-    authority,
-    redirectUri,
-    postLogoutRedirectUri: redirectUri,
-  },
-  cache: {
-    cacheLocation: "localStorage",
-    storeAuthStateInCookie: false,
-  },
+  return {
+    auth: {
+      clientId,
+      authority,
+      redirectUri,
+      postLogoutRedirectUri: redirectUri,
+    },
+    cache: {
+      cacheLocation: "localStorage",
+      storeAuthStateInCookie: false,
+    },
+  };
 };
+
+export const msalConfig = createMsalConfig();
 
 export const loginRequest = {
   scopes: ["User.Read", "openid", "profile", "email"],

@@ -7,10 +7,14 @@ services:
     restart: unless-stopped
     ports:
       - "${PORT:-3000}:3000"
-    env_file:
-      - .env
     environment:
       - NODE_ENV=production
+      - PORT=${PORT:-3000}
+      - VITE_AZURE_CLIENT_ID=${VITE_AZURE_CLIENT_ID:-}
+      - VITE_AZURE_AUTHORITY=${VITE_AZURE_AUTHORITY:-https://login.microsoftonline.com/organizations}
+      - VITE_AZURE_TENANT_ID=${VITE_AZURE_TENANT_ID:-organizations}
+      - VITE_AZURE_REDIRECT_URI=${VITE_AZURE_REDIRECT_URI:-https://codex.techmoulins.fr}
+      - ADMIN_EMAILS=${ADMIN_EMAILS:-victor1.granger@epitech.eu}
       - DATABASE_PATH=/app/data/codex.db
     volumes:
       # Volume persistant pour la base de données SQLite

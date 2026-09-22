@@ -1,24 +1,19 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { PublicClientApplication } from '@azure/msal-browser';
-import { msalConfig, loginRequest } from './authConfig';
+import { createMsalConfig, loginRequest } from './authConfig';
 import studentsData from '../data/students.json';
 import housesData from '../data/houses.json';
 import { getActiveUserSession, setActiveUserSession } from '../utils/storage';
 
 const AuthContext = createContext(null);
 
-let msalInstance = null;
-try {
-  msalInstance = new PublicClientApplication(msalConfig);
-} catch (e) {
-  console.error("MSAL Initialization Error:", e);
-}
-
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [msalReady, setMsalReady] = useState(false);
   const [authError, setAuthError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [runtimeConfig, setRuntimeConfig] = useState(null);
+  const msalInstanceRef = useRef(null);
 
   useEffect(() => {
     // 1. Restore local session if exists
@@ -27,30 +22,42 @@ export const AuthProvider = ({ children }) => {
       setCurrentUser(saved);
     }
 
-    // 2. Initialize MSAL
-    if (msalInstance) {
-      msalInstance.initialize()
-        .then(() => {
-          // Check if user is already signed in MSAL accounts
-          const accounts = msalInstance.getAllAccounts();
-          if (accounts.length > 0) {
-            const acc = accounts[0];
-            const email = acc.username || acc.idTokenClaims?.preferred_username || acc.idTokenClaims?.email;
-            const profile = linkUserWithDatabase(email, acc.name);
-            setCurrentUser(profile);
-            setActiveUserSession(profile);
-          }
-          setMsalReady(true);
-          setIsLoading(false);
-        })
-        .catch(err => {
-          console.error("Erreur d'initialisation MSAL:", err);
-          setMsalReady(true);
-          setIsLoading(false);
-        });
-    } else {
-      setIsLoading(false);
-    }
+    // 2. Fetch runtime config from server (Portainer / Docker env) & initialize MSAL
+    const initAuth = async () => {
+      let cfg = {};
+      try {
+        const res = await fetch('/api/config');
+        if (res.ok) {
+          cfg = await res.json();
+          setRuntimeConfig(cfg);
+        }
+      } catch (e) {
+        console.warn('API config fallback to build env:', e);
+      }
+
+      const activeConfig = createMsalConfig(cfg);
+      try {
+        const instance = new PublicClientApplication(activeConfig);
+        await instance.initialize();
+        msalInstanceRef.current = instance;
+
+        const accounts = instance.getAllAccounts();
+        if (accounts.length > 0) {
+          const acc = accounts[0];
+          const email = acc.username || acc.idTokenClaims?.preferred_username || acc.idTokenClaims?.email;
+          const profile = linkUserWithDatabase(email, acc.name);
+          setCurrentUser(profile);
+          setActiveUserSession(profile);
+        }
+        setMsalReady(true);
+      } catch (err) {
+        console.error("Erreur d'initialisation MSAL:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initAuth();
   }, []);
 
   // Match an email with students database & Houses
@@ -92,20 +99,21 @@ export const AuthProvider = ({ children }) => {
   const loginWithMicrosoft = async () => {
     setAuthError(null);
 
-    const clientId = import.meta.env.VITE_AZURE_CLIENT_ID;
-    if (!clientId || clientId.startsWith("00000000")) {
-      setAuthError("Configuration SSO incomplète : veuillez renseigner VITE_AZURE_CLIENT_ID dans le fichier .env avec l'identifiant d'application Microsoft Entra ID.");
+    const effectiveClientId = runtimeConfig?.clientId || import.meta.env.VITE_AZURE_CLIENT_ID;
+    if (!effectiveClientId || effectiveClientId.startsWith("00000000")) {
+      setAuthError("Configuration SSO requise : veuillez renseigner VITE_AZURE_CLIENT_ID dans les variables d'environnement de Portainer ou votre fichier .env.");
       return;
     }
 
-    if (!msalInstance || !msalReady) {
+    const instance = msalInstanceRef.current;
+    if (!instance || !msalReady) {
       setAuthError("Le service d'authentification Microsoft 365 est en cours de chargement. Veuillez réessayer.");
       return;
     }
 
     try {
       setIsLoading(true);
-      const response = await msalInstance.loginPopup(loginRequest);
+      const response = await instance.loginPopup(loginRequest);
       if (response && response.account) {
         const account = response.account;
         const email = account.username || account.idTokenClaims?.preferred_username || account.idTokenClaims?.email;
@@ -127,10 +135,11 @@ export const AuthProvider = ({ children }) => {
   // Logout from MSAL and clear session
   const logout = async () => {
     try {
-      if (msalInstance) {
-        const accounts = msalInstance.getAllAccounts();
+      const instance = msalInstanceRef.current;
+      if (instance) {
+        const accounts = instance.getAllAccounts();
         if (accounts.length > 0) {
-          await msalInstance.logoutPopup({
+          await instance.logoutPopup({
             account: accounts[0],
             mainWindowRedirectUri: window.location.origin
           });

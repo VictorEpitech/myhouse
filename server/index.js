@@ -24,6 +24,16 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Runtime configuration for frontend MSAL
+app.get('/api/config', (req, res) => {
+  res.json({
+    clientId: process.env.VITE_AZURE_CLIENT_ID || process.env.AZURE_CLIENT_ID || '',
+    authority: process.env.VITE_AZURE_AUTHORITY || process.env.AZURE_AUTHORITY || 'https://login.microsoftonline.com/organizations',
+    tenantId: process.env.VITE_AZURE_TENANT_ID || process.env.AZURE_TENANT_ID || 'organizations',
+    redirectUri: process.env.VITE_AZURE_REDIRECT_URI || process.env.AZURE_REDIRECT_URI || ''
+  });
+});
+
 // GET all results (for Admin Dashboard)
 app.get('/api/results', (req, res) => {
   try {
