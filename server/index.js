@@ -17,9 +17,7 @@ import {
 
 dotenv.config();
 
-const app = express();
-const PORT = process.env.PORT || 3000;
-const isProd = process.env.NODE_ENV === 'production';
+const PORT = process.env.INTERNAL_PORT || process.env.PORT || 3000;
 
 // Middlewares
 app.use(cors());
