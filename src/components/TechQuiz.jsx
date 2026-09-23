@@ -158,10 +158,13 @@ export default function TechQuiz({ onComplete, existingResult: propResult, onRes
       house: option.house
     }];
 
-    const newScores = {
-      ...scores,
-      [option.house]: scores[option.house] + 1
-    };
+    // Only personality questions (without correctOption) drive the house affinity scores
+    const newScores = !currentQ.correctOption
+      ? {
+          ...scores,
+          [option.house]: (scores[option.house] || 0) + 1
+        }
+      : scores;
 
     setAnswers(newAnswers);
     setScores(newScores);
