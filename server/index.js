@@ -17,6 +17,7 @@ import {
 
 dotenv.config();
 
+const app = express();
 const PORT = process.env.INTERNAL_PORT || process.env.PORT || 3000;
 
 // Middlewares
