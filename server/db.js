@@ -145,14 +145,16 @@ export const getAllResults = () => {
 
 export const getResultByEmail = (email) => {
   if (!email) return null;
-  const cleanEmail = email.trim().toLowerCase();
+  const cleanEmail = decodeURIComponent(email).trim().toLowerCase();
+  const altEmail = cleanEmail.includes('1.') ? cleanEmail.replace('1.', '.') : cleanEmail.replace('.', '1.');
   const query = db.prepare(`
     SELECT r.*, s.team_name as assigned_team_name 
     FROM results r
-    LEFT JOIN students s ON LOWER(r.email) = LOWER(s.email)
-    WHERE LOWER(r.email) = ?
+    LEFT JOIN students s ON LOWER(r.email) = LOWER(s.email) OR LOWER(r.email) = LOWER(REPLACE(s.email, '1.', '.'))
+    WHERE LOWER(r.email) = LOWER(?) OR LOWER(r.email) = LOWER(?)
+    LIMIT 1
   `);
-  const r = query.get(cleanEmail);
+  const r = query.get(cleanEmail, altEmail);
   if (!r) return null;
   return {
     id: r.id,
@@ -228,8 +230,10 @@ export const saveResult = (data) => {
 export const deleteResultByEmail = (email) => {
   if (!email) return false;
   const cleanEmail = decodeURIComponent(email).trim().toLowerCase();
-  const query = db.prepare('DELETE FROM results WHERE LOWER(email) = LOWER(?)');
-  query.run(cleanEmail);
+  const altEmail = cleanEmail.includes('1.') ? cleanEmail.replace('1.', '.') : cleanEmail.replace('.', '1.');
+  const query = db.prepare('DELETE FROM results WHERE LOWER(email) = LOWER(?) OR LOWER(email) = LOWER(?)');
+  const info = query.run(cleanEmail, altEmail);
+  console.log(`[Codex Database] deleteResultByEmail for ${cleanEmail} (alt: ${altEmail}): ${info.changes} supprimé(s)`);
   return true;
 };
 
@@ -331,9 +335,10 @@ export const updateStudentHouse = (email, teamId) => {
 export const deleteStudent = (email) => {
   if (!email) return false;
   const cleanEmail = decodeURIComponent(email).trim().toLowerCase();
-  const query = db.prepare('DELETE FROM students WHERE LOWER(email) = LOWER(?)');
-  query.run(cleanEmail);
-  const queryRes = db.prepare('DELETE FROM results WHERE LOWER(email) = LOWER(?)');
-  queryRes.run(cleanEmail);
+  const altEmail = cleanEmail.includes('1.') ? cleanEmail.replace('1.', '.') : cleanEmail.replace('.', '1.');
+  const query = db.prepare('DELETE FROM students WHERE LOWER(email) = LOWER(?) OR LOWER(email) = LOWER(?)');
+  query.run(cleanEmail, altEmail);
+  const queryRes = db.prepare('DELETE FROM results WHERE LOWER(email) = LOWER(?) OR LOWER(email) = LOWER(?)');
+  queryRes.run(cleanEmail, altEmail);
   return true;
 };

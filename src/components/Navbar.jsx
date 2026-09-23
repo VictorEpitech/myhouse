@@ -4,7 +4,7 @@ import { Shield, LogOut, ExternalLink, Sparkles, Volume2, VolumeX } from 'lucide
 import { sounds } from '../utils/soundEffects';
 import { getStoredResults } from '../utils/storage';
 
-export default function Navbar({ currentView, setCurrentView, soundEnabled, setSoundEnabled, userRevealedHouse }) {
+export default function Navbar({ currentView, setCurrentView, soundEnabled, setSoundEnabled, userRevealedHouse, hasCompletedQuiz }) {
   const { currentUser, loginWithMicrosoft, logout, isAdmin } = useAuth();
 
   const toggleSound = () => {
@@ -13,9 +13,8 @@ export default function Navbar({ currentView, setCurrentView, soundEnabled, setS
   };
 
   // Only display house badge if user already completed the ritual
-  const storedResults = getStoredResults();
-  const completedTest = currentUser ? (userRevealedHouse || storedResults[currentUser.email?.toLowerCase()]) : null;
-  const activeHouse = userRevealedHouse || (completedTest?.affinityHouse ? currentUser?.house : null);
+  const completedTest = hasCompletedQuiz || (userRevealedHouse != null);
+  const activeHouse = userRevealedHouse || (completedTest ? currentUser?.house : null);
 
   return (
     <header className="sticky top-0 z-40 w-full backdrop-blur-xl bg-[#070b12]/80 border-b border-slate-800/80">

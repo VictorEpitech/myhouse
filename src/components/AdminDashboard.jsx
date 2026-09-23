@@ -68,12 +68,10 @@ export default function AdminDashboard() {
   };
 
   const promos = Array.from(
-    new Set(students.filter(s => !s.isAdmin).map(s => s.classe).filter(Boolean))
+    new Set(students.map(s => s.classe).filter(Boolean))
   ).sort();
 
   const filteredStudents = students.filter(s => {
-    if (s.isAdmin) return false;
-
     const matchSearch = (s.fullName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
                         (s.email || '').toLowerCase().includes(searchTerm.toLowerCase());
 
@@ -200,12 +198,14 @@ export default function AdminDashboard() {
       sounds.playSelect();
       await removeUserResult(studentEmail);
       const cleanEmail = studentEmail.toLowerCase().trim();
+      const altEmail = cleanEmail.includes('1.') ? cleanEmail.replace('1.', '.') : cleanEmail.replace('.', '1.');
       setResultsData(prev => {
         const next = { ...prev };
         delete next[cleanEmail];
+        delete next[altEmail];
         return next;
       });
-      if (inspectStudent && inspectStudent.student.email.toLowerCase() === cleanEmail) {
+      if (inspectStudent && (inspectStudent.student.email.toLowerCase() === cleanEmail || inspectStudent.student.email.toLowerCase() === altEmail)) {
         setInspectStudent(prev => ({
           ...prev,
           result: null
@@ -320,6 +320,16 @@ export default function AdminDashboard() {
                 Pôle Pédagogique Epitech Moulins
               </span>
               <span className="text-xs text-slate-400 font-mono">victor1.granger@epitech.eu</span>
+              {Boolean(resultsData['victor1.granger@epitech.eu'] || resultsData['victor.granger@epitech.eu']) && (
+                <button
+                  onClick={() => handleResetTest('victor1.granger@epitech.eu', 'Victor Granger')}
+                  className="ml-2 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-amber-500/15 border border-amber-500/40 text-amber-300 hover:bg-amber-500/25 transition"
+                  title="Réinitialiser mon propre test pour le repasser"
+                >
+                  <RotateCcw className="w-3 h-3" />
+                  <span>Réinitialiser mon test</span>
+                </button>
+              )}
             </div>
             <h2 className="text-2xl sm:text-3xl font-cyber font-extrabold text-white mt-1">
               Résultats du QCM ({totalQuestionsCount} Questions) & Dashboard

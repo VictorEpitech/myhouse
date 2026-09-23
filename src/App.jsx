@@ -8,7 +8,7 @@ import HouseRevealModal from './components/HouseRevealModal';
 import AdminDashboard from './components/AdminDashboard';
 import CodexLinkSection from './components/CodexLinkSection';
 import Footer from './components/Footer';
-import { getStoredResults } from './utils/storage';
+import { getStoredResults, syncStudentResultFromDB } from './utils/storage';
 
 function MainContent() {
   const [currentView, setCurrentView] = useState('home'); // 'home' | 'quiz' | 'houses' | 'admin'
@@ -16,7 +16,40 @@ function MainContent() {
   const [revealResult, setRevealResult] = useState(null);
   const [selectedHouseId, setSelectedHouseId] = useState(1);
   const [userRevealedHouse, setUserRevealedHouse] = useState(null);
+  const [userQuizResult, setUserQuizResult] = useState(null);
   const { currentUser, isAdmin } = useAuth();
+
+  // Authoritative server DB synchronization for current user
+  useEffect(() => {
+    let active = true;
+    if (currentUser?.email) {
+      syncStudentResultFromDB(currentUser.email).then(res => {
+        if (!active) return;
+        setUserQuizResult(res || null);
+      }).catch(() => {});
+    } else {
+      setUserQuizResult(null);
+    }
+    return () => { active = false; };
+  }, [currentUser?.email]);
+
+  // Listen for admin/self reset events to immediately update entire UI
+  useEffect(() => {
+    const handleReset = (e) => {
+      const email = e.detail?.email;
+      if (currentUser?.email) {
+        const clean = currentUser.email.toLowerCase().trim();
+        const resetEmail = (email || '').toLowerCase().trim();
+        if (!resetEmail || resetEmail === clean || resetEmail === clean.replace('1.', '.') || resetEmail === clean.replace('.', '1.')) {
+          setUserQuizResult(null);
+          setUserRevealedHouse(null);
+          setRevealResult(null);
+        }
+      }
+    };
+    window.addEventListener('codex_result_reset', handleReset);
+    return () => window.removeEventListener('codex_result_reset', handleReset);
+  }, [currentUser?.email]);
 
   const handleStartQuiz = () => {
     setCurrentView('quiz');
@@ -31,20 +64,17 @@ function MainContent() {
 
   const handleDirectReveal = (user) => {
     const house = userRevealedHouse || user?.house;
-    const stored = getStoredResults();
-    const existing = user?.email ? stored[user.email.toLowerCase()] : null;
-
     setRevealResult({
       officialHouse: house,
-      affinityHouse: house,
-      scores: existing?.scores || null,
-      correctCount: existing?.correctCount,
-      totalTechnicalQuestions: existing?.totalTechnicalQuestions
+      scores: userQuizResult?.scores || null,
+      correctCount: userQuizResult?.correctCount,
+      totalTechnicalQuestions: userQuizResult?.totalTechnicalQuestions
     });
   };
 
   const handleQuizComplete = (result) => {
     setUserRevealedHouse(result.officialHouse);
+    setUserQuizResult(result);
     setRevealResult(result);
   };
 
@@ -58,6 +88,7 @@ function MainContent() {
         soundEnabled={soundEnabled}
         setSoundEnabled={setSoundEnabled}
         userRevealedHouse={userRevealedHouse}
+        hasCompletedQuiz={!!userQuizResult}
       />
 
       {/* Main Views */}
@@ -69,13 +100,23 @@ function MainContent() {
               onExploreHouses={handleExploreHouses}
               onDirectReveal={handleDirectReveal}
               userRevealedHouse={userRevealedHouse}
+              hasCompletedQuiz={!!userQuizResult}
+              quizResult={userQuizResult}
             />
             <CodexLinkSection />
           </>
         )}
 
         {currentView === 'quiz' && (
-          <TechQuiz onComplete={handleQuizComplete} />
+          <TechQuiz 
+            onComplete={handleQuizComplete} 
+            existingResult={userQuizResult}
+            onReset={() => {
+              setUserQuizResult(null);
+              setUserRevealedHouse(null);
+              setRevealResult(null);
+            }}
+          />
         )}
 
         {currentView === 'houses' && (

@@ -112,18 +112,25 @@ app.post('/api/results', (req, res) => {
   }
 });
 
-// DELETE result (Admin reset for testing)
-app.delete('/api/results/:email', (req, res) => {
+// DELETE / POST reset result (Admin reset for testing, works across proxies)
+const handleResetResult = (req, res) => {
   try {
-    const email = req.params.email;
-    deleteResultByEmail(email);
-    console.log(`[Codex Admin] Résultat supprimé pour: ${email}`);
+    const email = req.params.email || req.body?.email || req.query?.email;
+    if (!email) {
+      return res.status(400).json({ success: false, error: 'Email manquant' });
+    }
+    const ok = deleteResultByEmail(email);
+    console.log(`[Codex Admin] Résultat réinitialisé pour: ${email} (succès: ${ok})`);
     res.json({ success: true, message: `Résultat réinitialisé pour ${email}` });
   } catch (err) {
-    console.error('Error deleting result:', err);
-    res.status(500).json({ success: false, error: 'Erreur suppression' });
+    console.error('Error resetting result:', err);
+    res.status(500).json({ success: false, error: 'Erreur réinitialisation résultat' });
   }
-});
+};
+
+app.delete('/api/results/:email', handleResetResult);
+app.post('/api/results/reset', handleResetResult);
+app.post('/api/results/:email/reset', handleResetResult);
 
 // ==========================================
 // STUDENTS MANAGEMENT ROUTES (Admin)

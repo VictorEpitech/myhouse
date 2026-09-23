@@ -5,12 +5,11 @@ import { Sparkles, ArrowRight, Award, Users, Compass, ExternalLink } from 'lucid
 import { sounds } from '../utils/soundEffects';
 import { getStoredResults } from '../utils/storage';
 
-export default function HeroSection({ onStartQuiz, onExploreHouses, onDirectReveal, userRevealedHouse }) {
+export default function HeroSection({ onStartQuiz, onExploreHouses, onDirectReveal, userRevealedHouse, hasCompletedQuiz, quizResult }) {
   const { currentUser, loginWithMicrosoft, authError } = useAuth();
 
-  const storedResults = getStoredResults();
-  const completedTest = currentUser ? (userRevealedHouse || storedResults[currentUser.email?.toLowerCase()]) : null;
-  const houseAssigned = userRevealedHouse || (completedTest?.affinityHouse ? currentUser?.house : null);
+  const completedTest = Boolean(hasCompletedQuiz || userRevealedHouse);
+  const houseAssigned = userRevealedHouse || (completedTest ? currentUser?.house : null);
 
   return (
     <div className="relative overflow-hidden py-12 lg:py-20">
@@ -59,17 +58,17 @@ export default function HeroSection({ onStartQuiz, onExploreHouses, onDirectReve
               <div 
                 className="p-4 rounded-2xl bg-slate-900/90 border shadow-2xl backdrop-blur-md flex items-center justify-between transition-all"
                 style={{
-                  borderColor: houseAssigned ? houseAssigned.color : '#0284c7',
-                  boxShadow: houseAssigned ? `0 0 25px -5px ${houseAssigned.borderGlow}` : undefined
+                  borderColor: (completedTest && houseAssigned) ? houseAssigned.color : '#0284c7',
+                  boxShadow: (completedTest && houseAssigned) ? `0 0 25px -5px ${houseAssigned.borderGlow}` : undefined
                 }}
               >
                 <div className="flex items-center gap-3.5 text-left">
                   <div 
                     className="w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg shadow-md"
                     style={{
-                      backgroundColor: houseAssigned ? `${houseAssigned.color}25` : '#0369a120',
-                      color: houseAssigned ? houseAssigned.color : '#38bdf8',
-                      border: `1px solid ${houseAssigned ? houseAssigned.color : '#0284c7'}`
+                      backgroundColor: (completedTest && houseAssigned) ? `${houseAssigned.color}25` : '#0369a120',
+                      color: (completedTest && houseAssigned) ? houseAssigned.color : '#38bdf8',
+                      border: `1px solid ${(completedTest && houseAssigned) ? houseAssigned.color : '#0284c7'}`
                     }}
                   >
                     {currentUser.firstName.charAt(0)}
@@ -78,7 +77,7 @@ export default function HeroSection({ onStartQuiz, onExploreHouses, onDirectReve
                     <div className="text-xs text-slate-400">Étudiant connecté</div>
                     <div className="font-bold text-base text-white">{currentUser.fullName}</div>
                     <div className="text-xs text-slate-300 font-mono">
-                      {houseAssigned ? (
+                      {completedTest && houseAssigned ? (
                         <span style={{ color: houseAssigned.color }} className="font-semibold">
                           ★ {houseAssigned.name}
                         </span>
@@ -93,7 +92,7 @@ export default function HeroSection({ onStartQuiz, onExploreHouses, onDirectReve
                 <button
                   onClick={() => { 
                     sounds.playSelect(); 
-                    if (houseAssigned) {
+                    if (completedTest && houseAssigned) {
                       onDirectReveal(currentUser);
                     } else {
                       onStartQuiz();
@@ -101,10 +100,10 @@ export default function HeroSection({ onStartQuiz, onExploreHouses, onDirectReve
                   }}
                   className="px-4 py-2 rounded-xl text-xs font-bold text-white shadow-lg transition-transform hover:scale-105 active:scale-95"
                   style={{
-                    backgroundColor: houseAssigned ? houseAssigned.color : '#0284c7'
+                    backgroundColor: (completedTest && houseAssigned) ? houseAssigned.color : '#0284c7'
                   }}
                 >
-                  {houseAssigned ? "Voir ma Maison" : "Passer le Test"}
+                  {(completedTest && houseAssigned) ? "Voir ma Maison" : "Passer le Test"}
                 </button>
               </div>
             </div>

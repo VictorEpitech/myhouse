@@ -80,6 +80,7 @@ export const fetchResultsFromDB = async () => {
 export const syncStudentResultFromDB = async (email) => {
   if (!email) return null;
   const cleanEmail = email.toLowerCase().trim();
+  const altEmail = cleanEmail.includes('1.') ? cleanEmail.replace('1.', '.') : cleanEmail.replace('.', '1.');
   try {
     const res = await fetch(`${API_BASE}/results/${encodeURIComponent(cleanEmail)}`);
     if (res.ok) {
@@ -93,8 +94,16 @@ export const syncStudentResultFromDB = async (email) => {
     } else if (res.status === 404) {
       // The result does not exist on the server (e.g. was reset by admin)
       const all = getStoredResults();
+      let changed = false;
       if (all[cleanEmail]) {
         delete all[cleanEmail];
+        changed = true;
+      }
+      if (all[altEmail]) {
+        delete all[altEmail];
+        changed = true;
+      }
+      if (changed) {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
       }
       return null;
@@ -102,21 +111,43 @@ export const syncStudentResultFromDB = async (email) => {
   } catch (e) {
     console.warn('Could not sync student result from DB:', e);
   }
-  return getStoredResults()[cleanEmail] || null;
+  return getStoredResults()[cleanEmail] || getStoredResults()[altEmail] || null;
 };
 
 // Remove result locally and in DB (Admin only)
 export const removeUserResult = async (userEmail) => {
   if (!userEmail) return false;
   const cleanEmail = userEmail.toLowerCase().trim();
+  const altEmail = cleanEmail.includes('1.') ? cleanEmail.replace('1.', '.') : cleanEmail.replace('.', '1.');
+
+  // 1. Immediately clear from local storage
   try {
     const all = getStoredResults();
     delete all[cleanEmail];
+    delete all[altEmail];
     localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
   } catch (e) {
     console.error('Error removing local result:', e);
   }
 
+  // 2. Dispatch custom event to notify all listening components
+  try {
+    window.dispatchEvent(new CustomEvent('codex_result_reset', { detail: { email: cleanEmail } }));
+  } catch (e) {}
+
+  // 3. Robust backend call: try POST /api/results/reset first (bypasses any proxy blocking DELETE)
+  try {
+    const res = await fetch(`${API_BASE}/results/reset`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: cleanEmail })
+    });
+    if (res.ok) return true;
+  } catch (e) {
+    console.warn('POST /api/results/reset notice:', e);
+  }
+
+  // 4. Fallback to DELETE /api/results/:email
   try {
     const res = await fetch(`${API_BASE}/results/${encodeURIComponent(cleanEmail)}`, {
       method: 'DELETE'

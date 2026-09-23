@@ -6,7 +6,7 @@ import { sounds } from '../utils/soundEffects';
 import { saveUserResult, getStoredResults, removeUserResult, syncStudentResultFromDB } from '../utils/storage';
 import { Sparkles, RotateCcw, Lock, ShieldAlert, CheckCircle2 } from 'lucide-react';
 
-export default function TechQuiz({ onComplete }) {
+export default function TechQuiz({ onComplete, existingResult: propResult, onReset }) {
   const { currentUser } = useAuth();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState([]);
@@ -21,40 +21,33 @@ export default function TechQuiz({ onComplete }) {
   const [analysisStep, setAnalysisStep] = useState(0);
   const [isAdminReset, setIsAdminReset] = useState(false);
 
-  // Check if current user has already taken the quiz (local cache + authoritative server DB)
-  const [existingResult, setExistingResult] = useState(() => {
-    const storedResults = getStoredResults();
-    return currentUser?.email ? (storedResults[currentUser.email.toLowerCase()] || null) : null;
-  });
+  // Authoritative result state (from App or local sync)
+  const [activeResult, setActiveResult] = useState(propResult !== undefined ? propResult : null);
 
-  // Verify and synchronize result with authoritative server DB on mount
   React.useEffect(() => {
-    let isMounted = true;
-    if (currentUser?.email) {
-      syncStudentResultFromDB(currentUser.email).then(dbRes => {
-        if (!isMounted) return;
-        setExistingResult(dbRes || null);
-        if (dbRes) {
-          const expectedTeam = currentUser.teamName || currentUser.house?.name;
-          if (expectedTeam && expectedTeam !== 'Non assigné' && dbRes.officialTeam !== expectedTeam) {
-            saveUserResult(currentUser.email, {
-              ...dbRes,
-              officialTeam: expectedTeam
-            });
-          }
-        }
-      });
+    setActiveResult(propResult !== undefined ? propResult : null);
+  }, [propResult]);
+
+  // Synchronize local result with authoritative currentUser assigned house
+  React.useEffect(() => {
+    if (currentUser?.email && activeResult) {
+      const expectedTeam = currentUser.teamName || currentUser.house?.name;
+      if (expectedTeam && expectedTeam !== 'Non assigné' && activeResult.officialTeam !== expectedTeam) {
+        saveUserResult(currentUser.email, {
+          ...activeResult,
+          officialTeam: expectedTeam
+        });
+      }
     }
-    return () => { isMounted = false; };
-  }, [currentUser]);
+  }, [currentUser, activeResult]);
 
   // STRICT SINGLE-ATTEMPT RULE: if already completed and not admin reset, show locked view
-  if (existingResult && !isAdminReset) {
+  if (activeResult && !isAdminReset) {
     const assignedHouse = currentUser?.house || 
       housesData.find(h => h.id === currentUser?.teamId || h.name === currentUser?.teamName) ||
-      housesData.find(h => h.name === existingResult.officialTeam) ||
+      housesData.find(h => h.name === activeResult.officialTeam) ||
       housesData[0];
-    const totalTechCount = existingResult.totalTechnicalQuestions || questionsData.filter(q => q.correctOption).length;
+    const totalTechCount = activeResult.totalTechnicalQuestions || questionsData.filter(q => q.correctOption).length;
 
     return (
       <div className="max-w-2xl mx-auto py-16 px-4 text-center space-y-6 animate-fadeIn">
@@ -89,14 +82,14 @@ export default function TechQuiz({ onComplete }) {
           <div className="flex justify-between items-center text-xs border-b border-slate-800 pb-2.5">
             <span className="text-slate-400 font-mono">Date de validation :</span>
             <span className="text-slate-300 font-mono">
-              {existingResult.completedAt ? new Date(existingResult.completedAt).toLocaleString('fr-FR') : 'Scellé'}
+              {activeResult.completedAt ? new Date(activeResult.completedAt).toLocaleString('fr-FR') : 'Scellé'}
             </span>
           </div>
 
           <div className="flex justify-between items-center text-xs border-b border-slate-800 pb-2.5">
             <span className="text-slate-400 font-mono">Score de Logique & Culture :</span>
             <span className="text-emerald-400 font-mono font-bold">
-              {existingResult.correctCount} / {totalTechCount}
+              {activeResult.correctCount} / {totalTechCount}
             </span>
           </div>
 
@@ -115,8 +108,8 @@ export default function TechQuiz({ onComplete }) {
               sounds.playSelect();
               onComplete({
                 officialHouse: assignedHouse,
-                scores: existingResult.scores,
-                correctCount: existingResult.correctCount,
+                scores: activeResult.scores,
+                correctCount: activeResult.correctCount,
                 totalTechnicalQuestions: totalTechCount
               });
             }}
@@ -131,8 +124,9 @@ export default function TechQuiz({ onComplete }) {
               onClick={async () => {
                 sounds.playSelect();
                 await removeUserResult(currentUser.email);
-                setExistingResult(null);
+                setActiveResult(null);
                 setIsAdminReset(true);
+                onReset?.();
               }}
               className="text-xs text-red-400 hover:text-red-300 font-mono underline p-2"
             >
