@@ -11,10 +11,12 @@ import {
   updateStudentHouseInDB, 
   deleteStudentFromDB 
 } from '../utils/storage';
+import { getStudentProfile } from '../utils/studentProfile';
 import { 
   Shield, Download, Search, Users, Award, 
   CheckCircle2, Clock, Sparkles, RefreshCw, ExternalLink,
-  UserPlus, Edit3, Trash2, Check, AlertCircle, X
+  UserPlus, Edit3, Trash2, Check, AlertCircle, X,
+  ChevronDown, ChevronUp, Brain, Globe, Wrench, BookOpen, Target, Bug, Zap
 } from 'lucide-react';
 import { sounds } from '../utils/soundEffects';
 
@@ -26,6 +28,7 @@ export default function AdminDashboard() {
   const [resultsData, setResultsData] = useState({});
   const [inspectStudent, setInspectStudent] = useState(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [showAnswersDetail, setShowAnswersDetail] = useState(false);
 
   // Add Student Modal State
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -205,24 +208,31 @@ export default function AdminDashboard() {
   const handleExportCSV = () => {
     sounds.playSelect();
     let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
-    csvContent += `Nom,Prénom,Email,Promotion,Maison Officielle,Score Énigmes (/${totalTechCount}),Affinité Calculée,Affinité Timelord,Affinité Gatekeeper,Affinité CodeCrafter,Affinité Oracle,Date Complétion\n`;
+    csvContent += `Nom,Prénom,Email,Promotion,Maison Officielle,Score Énigmes (/${totalTechCount}),Niveau Culture Info,Logique & Algo (/9),Réseaux & Web (/4),Systèmes & Hardware (/7),Culture Tech (/5),Archétype Personnalité,Rôle Idéal Projet,Réflexe Bug,Affinité Timelords %,Affinité Gatekeepers %,Affinité CodeCrafters %,Affinité Oracles %,Date Complétion\n`;
 
     students.filter(s => !s.isAdmin).forEach(s => {
-      const res = resultsData[s.email.toLowerCase()] || {};
-      const sc = res.scores || {};
+      const res = resultsData[s.email.toLowerCase()] || null;
+      const prof = getStudentProfile(res, s);
       const row = [
         `"${s.lastName}"`,
         `"${s.firstName}"`,
         `"${s.email}"`,
         `"${s.classe}"`,
         `"${s.teamName}"`,
-        res.correctCount !== undefined ? `${res.correctCount}/${res.totalTechnicalQuestions || totalTechCount}` : 'N/A',
-        `"${res.affinityHouse || 'Non passé'}"`,
-        sc.timelords || 0,
-        sc.gatekeepers || 0,
-        sc.codecrafters || 0,
-        sc.oracles || 0,
-        `"${res.completedAt ? new Date(res.completedAt).toLocaleString('fr-FR') : ''}"`
+        res && res.correctCount !== undefined ? `${res.correctCount}/${res.totalTechnicalQuestions || totalTechCount}` : 'N/A',
+        `"${prof.hasResult ? prof.culture.level.title : 'Non passé'}"`,
+        prof.hasResult ? `${prof.culture.domains[0]?.score || 0}/9` : 'N/A',
+        prof.hasResult ? `${prof.culture.domains[1]?.score || 0}/4` : 'N/A',
+        prof.hasResult ? `${prof.culture.domains[2]?.score || 0}/7` : 'N/A',
+        prof.hasResult ? `${prof.culture.domains[3]?.score || 0}/5` : 'N/A',
+        `"${prof.hasResult ? prof.personality.title : 'Non calculé'}"`,
+        `"${prof.hasResult ? prof.personality.idealRole : 'N/A'}"`,
+        `"${prof.hasResult ? prof.personality.bugReaction : 'N/A'}"`,
+        prof.hasResult ? (prof.personality.breakdown[0]?.percent || 0) : 0,
+        prof.hasResult ? (prof.personality.breakdown[1]?.percent || 0) : 0,
+        prof.hasResult ? (prof.personality.breakdown[2]?.percent || 0) : 0,
+        prof.hasResult ? (prof.personality.breakdown[3]?.percent || 0) : 0,
+        `"${res?.completedAt ? new Date(res.completedAt).toLocaleString('fr-FR') : ''}"`
       ];
       csvContent += row.join(",") + "\n";
     });
@@ -230,7 +240,7 @@ export default function AdminDashboard() {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `resultats_qcm_${totalQuestionsCount}_questions_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.setAttribute("download", `resultats_epitech_codex_${totalQuestionsCount}_questions_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -521,26 +531,52 @@ export default function AdminDashboard() {
                       </select>
                     </td>
 
-                    {/* Logic Score */}
+                    {/* Logic Score with Culture Level Badge */}
                     <td className="p-4">
                       {hasCompleted && res.correctCount !== undefined ? (
-                        <span className="font-mono font-bold text-xs text-emerald-400 bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-500/30">
-                          {res.correctCount} / {res.totalTechnicalQuestions || totalTechCount}
-                        </span>
+                        (() => {
+                          const prof = getStudentProfile(res, student);
+                          return (
+                            <div className="space-y-1">
+                              <span className="font-mono font-bold text-xs text-emerald-400 bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-500/30 inline-block">
+                                {res.correctCount} / {res.totalTechnicalQuestions || totalTechCount}
+                              </span>
+                              <div className="text-[10px] text-slate-300 font-medium flex items-center gap-1">
+                                <span>{prof.culture.level.icon}</span>
+                                <span className="truncate max-w-[130px]" title={prof.culture.level.title}>
+                                  {prof.culture.level.title}
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        })()
                       ) : (
                         <span className="text-slate-600 font-mono text-[10px]">—</span>
                       )}
                     </td>
 
-                    {/* Affinity */}
+                    {/* Affinity & Archetype */}
                     <td className="p-4">
                       {hasCompleted ? (
-                        <span className="font-medium text-slate-200 flex items-center gap-1.5">
-                          <Sparkles className="w-3.5 h-3.5 text-purple-400" />
-                          {res.affinityHouse || 'Calculé'}
-                        </span>
+                        (() => {
+                          const prof = getStudentProfile(res, student);
+                          return (
+                            <div className="space-y-0.5">
+                              <span 
+                                className="font-bold text-xs flex items-center gap-1.5"
+                                style={{ color: prof.personality.color }}
+                              >
+                                <span>{prof.personality.icon}</span>
+                                <span>{res.affinityHouse || prof.personality.name}</span>
+                              </span>
+                              <div className="text-[10px] text-slate-400 truncate max-w-[140px]" title={prof.personality.title}>
+                                {prof.personality.title}
+                              </div>
+                            </div>
+                          );
+                        })()
                       ) : (
-                        <span className="text-slate-500 italic">En attente du test</span>
+                        <span className="text-slate-500 italic text-[11px]">En attente du test</span>
                       )}
                     </td>
 
@@ -738,107 +774,365 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* INSPECT STUDENT MODAL */}
-      {inspectStudent && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-fadeIn">
-          <div className="bg-[#0b1322] border border-cyan-500/30 rounded-2xl max-w-xl w-full p-6 space-y-5 shadow-2xl max-h-[90vh] overflow-y-auto">
-            
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <div>
-                <h3 className="text-lg font-cyber font-bold text-white">
-                  {inspectStudent.student.fullName}
-                </h3>
-                <p className="text-xs text-slate-400 font-mono">{inspectStudent.student.email}</p>
-              </div>
-              <button
-                onClick={() => setInspectStudent(null)}
-                className="p-1 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800"
-              >
-                ✕
-              </button>
-            </div>
+      {/* INSPECT STUDENT MODAL - RECAP SYMPATHIQUE CULTURE & PERSONNALITÉ */}
+      {inspectStudent && (() => {
+        const prof = getStudentProfile(inspectStudent.result, inspectStudent.student);
+        const houseObj = housesData.find(h => h.id === inspectStudent.student.teamId);
 
-            <div className="space-y-3 text-xs">
-              <div className="flex justify-between py-1 border-b border-slate-800/80">
-                <span className="text-slate-400">Promotion :</span>
-                <span className="text-white font-medium">{inspectStudent.student.classe}</span>
-              </div>
+        return (
+          <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 animate-fadeIn">
+            <div className="bg-[#0b1322] border border-cyan-500/40 rounded-3xl max-w-3xl w-full p-5 sm:p-7 space-y-6 shadow-2xl shadow-cyan-950/60 max-h-[92vh] overflow-y-auto">
               
-              {/* Change House Attribution directly in inspect modal */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-2 border-b border-slate-800/80">
-                <span className="text-slate-400">Maison Officielle :</span>
-                <div className="flex items-center gap-2">
+              {/* Header */}
+              <div className="flex items-start justify-between border-b border-slate-800 pb-4">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-mono font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-800">
+                      Dossier Pédagogique Étudiant
+                    </span>
+                    <span className="text-xs text-slate-400 font-mono">{inspectStudent.student.classe}</span>
+                  </div>
+                  <h3 className="text-2xl font-cyber font-extrabold text-white">
+                    {inspectStudent.student.fullName}
+                  </h3>
+                  <p className="text-xs text-slate-400 font-mono">{inspectStudent.student.email}</p>
+                </div>
+                
+                <button
+                  onClick={() => { setInspectStudent(null); setShowAnswersDetail(false); }}
+                  className="p-2 text-slate-400 hover:text-white rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 transition"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Attribution Maison Officielle (Compétition Epitech) */}
+              <div className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-inner">
+                <div>
+                  <div className="text-xs font-mono uppercase text-slate-400 font-semibold flex items-center gap-1.5">
+                    <Shield className="w-4 h-4 text-cyan-400" />
+                    <span>Maison Officielle de Rattachement (Compétition Codex) :</span>
+                  </div>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    L'équipe officielle de l'étudiant reste strictement déterminée par son affectation de base.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
                   <select
                     value={inspectStudent.student.teamId || ''}
                     onChange={(e) => {
                       const val = e.target.value ? parseInt(e.target.value, 10) : null;
                       handleUpdateStudentHouse(inspectStudent.student.email, val);
                     }}
-                    className="px-3 py-1.5 rounded-lg text-xs font-bold font-mono bg-slate-950 border border-slate-700 text-white focus:outline-none focus:border-cyan-500"
+                    className="px-3 py-2 rounded-xl text-xs font-bold font-mono border bg-slate-950 focus:outline-none cursor-pointer shadow transition"
+                    style={{
+                      color: houseObj ? houseObj.color : '#f59e0b',
+                      borderColor: houseObj ? `${houseObj.color}60` : '#b4530960',
+                      backgroundColor: houseObj ? `${houseObj.color}15` : '#451a0320'
+                    }}
                   >
-                    <option value="">Non assigné</option>
-                    <option value="1">Maison 1 : Les Timelords</option>
-                    <option value="2">Maison 2 : Les Gatekeepers</option>
-                    <option value="3">Maison 3 : The CodeCrafters</option>
-                    <option value="4">Maison 4 : The Oracles</option>
+                    <option value="" className="bg-slate-900 text-amber-400">Non assigné</option>
+                    <option value="1" className="bg-slate-900 text-[#4da3ff]">Maison 1 : Les Timelords</option>
+                    <option value="2" className="bg-slate-900 text-[#fb923c]">Maison 2 : Les Gatekeepers</option>
+                    <option value="3" className="bg-slate-900 text-[#a3e635]">Maison 3 : The CodeCrafters</option>
+                    <option value="4" className="bg-slate-900 text-[#ff5a5a]">Maison 4 : The Oracles</option>
                   </select>
                 </div>
               </div>
 
-              <div className="flex justify-between py-1 border-b border-slate-800/80">
-                <span className="text-slate-400">Score Énigmes Logiques / Tech :</span>
-                <span className="text-emerald-300 font-bold">
-                  {inspectStudent.result?.correctCount !== undefined 
-                    ? `${inspectStudent.result.correctCount} / ${inspectStudent.result?.totalTechnicalQuestions || totalTechCount} bonnes réponses` 
-                    : 'Non encore passé'}
-                </span>
-              </div>
-              
-              {inspectStudent.result?.answers && inspectStudent.result.answers.length > 0 && (
-                <div className="pt-2 space-y-2">
-                  <div className="text-[11px] font-mono text-slate-400 uppercase font-semibold">
-                    Détail des choix de l'étudiant ({inspectStudent.result?.answers?.length || totalQuestionsCount} Questions) :
-                  </div>
-                  <div className="space-y-1.5 max-h-56 overflow-y-auto pr-1">
-                    {inspectStudent.result.answers.map((ans, i) => (
-                      <div key={i} className="p-2 rounded bg-slate-950/70 border border-slate-800 text-[11px] flex items-center justify-between">
-                        <span className="text-slate-300">Q{ans.questionId} ({ans.category})</span>
-                        <div className="flex items-center gap-2">
-                          <span className="text-slate-200 font-semibold">{ans.optionLabel}</span>
-                          {ans.isCorrect === true && (
-                            <span className="text-[10px] text-emerald-400 font-mono">✓ Juste</span>
-                          )}
-                          {ans.isCorrect === false && (
-                            <span className="text-[10px] text-rose-400 font-mono">✗ Faux</span>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+              {/* Status Banner if not completed */}
+              {!prof.hasResult && (
+                <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 text-center space-y-2">
+                  <Clock className="w-8 h-8 text-amber-400 mx-auto animate-pulse" />
+                  <div className="font-semibold text-white text-sm">Le rituel d'attribution n'a pas encore été passé</div>
+                  <p className="text-xs text-slate-400 max-w-md mx-auto">
+                    Dès que l'étudiant aura complété les {totalQuestionsCount} questions sur son interface, son analyse de culture informatique et son profil de personnalité s'afficheront automatiquement ici.
+                  </p>
                 </div>
               )}
+
+              {/* Rich Profiling Content */}
+              {prof.hasResult && (
+                <div className="space-y-5">
+                  
+                  {/* VOLET 1 : CULTURE INFORMATIQUE & FONDAMENTAUX */}
+                  <div className="p-5 rounded-2xl bg-gradient-to-b from-[#0a1424] to-[#070d18] border border-cyan-500/30 space-y-4 shadow-xl">
+                    
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+                      <div className="flex items-center gap-2">
+                        <Brain className="w-5 h-5 text-cyan-400" />
+                        <h4 className="font-cyber font-bold text-white text-base">
+                          Culture Informatique & Fondamentaux Tech
+                        </h4>
+                      </div>
+                      
+                      {/* Overall Level Badge */}
+                      <span className={`text-xs font-mono font-bold px-3 py-1 rounded-full border inline-flex items-center gap-1.5 ${prof.culture.level.badge}`}>
+                        <span>{prof.culture.level.icon}</span>
+                        <span>{prof.culture.score} / {prof.culture.total}</span>
+                        <span>•</span>
+                        <span>{prof.culture.level.title}</span>
+                      </span>
+                    </div>
+
+                    {/* Friendly summary */}
+                    <p className="text-xs text-slate-300 leading-relaxed italic bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+                      💡 {prof.culture.level.summary}
+                    </p>
+
+                    {/* 4 Domain Cards Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                      {prof.culture.domains.map(dom => (
+                        <div 
+                          key={dom.id} 
+                          className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 flex flex-col justify-between space-y-2"
+                        >
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="text-slate-300 font-semibold flex items-center gap-1.5">
+                              <span>{dom.icon}</span>
+                              <span>{dom.name}</span>
+                            </span>
+                            <span className="font-mono font-bold text-xs" style={{ color: dom.color }}>
+                              {dom.score} / {dom.total}
+                            </span>
+                          </div>
+
+                          <div className="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-800">
+                            <div 
+                              className="h-full rounded-full transition-all duration-500"
+                              style={{ 
+                                width: `${dom.percent}%`,
+                                backgroundColor: dom.color 
+                              }}
+                            ></div>
+                          </div>
+
+                          <div className="flex justify-between items-center text-[10px] text-slate-500 font-mono">
+                            <span>Taux de réussite</span>
+                            <span>{dom.percent}%</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                  </div>
+
+                  {/* VOLET 2 : TYPE DE PERSONNALITÉ & PROFIL D'INGÉNIEUR */}
+                  <div 
+                    className="p-5 rounded-2xl border space-y-4 shadow-xl"
+                    style={{
+                      background: `linear-gradient(180deg, ${prof.personality.color}15 0%, #070d18 100%)`,
+                      borderColor: `${prof.personality.color}45`
+                    }}
+                  >
+                    
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+                      <div className="flex items-center gap-2">
+                        <span className="text-2xl">{prof.personality.icon}</span>
+                        <div>
+                          <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400">
+                            Archétype & Méthode d'Ingénieur
+                          </div>
+                          <h4 
+                            className="font-cyber font-bold text-lg leading-tight"
+                            style={{ color: prof.personality.color }}
+                          >
+                            {prof.personality.title}
+                          </h4>
+                        </div>
+                      </div>
+
+                      <span 
+                        className="text-xs font-mono font-bold px-3 py-1 rounded-full border inline-flex items-center gap-1.5 self-start sm:self-auto"
+                        style={{
+                          color: prof.personality.color,
+                          borderColor: `${prof.personality.color}50`,
+                          backgroundColor: `${prof.personality.color}15`
+                        }}
+                      >
+                        <Sparkles className="w-3.5 h-3.5" />
+                        Affinité : {prof.personality.name}
+                      </span>
+                    </div>
+
+                    {/* Friendly Narrative Description */}
+                    <div className="text-xs text-slate-200 leading-relaxed bg-slate-950/70 p-3.5 rounded-xl border border-slate-800/80 space-y-1">
+                      <div className="text-[11px] font-mono font-semibold text-slate-400 uppercase">
+                        Comportement & Rôle dans l'équipe :
+                      </div>
+                      <p>{prof.personality.narrative}</p>
+                    </div>
+
+                    {/* Behavioral Attributes Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs font-mono">
+                      
+                      {/* Ideal role */}
+                      <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1">
+                        <div className="text-[10px] text-slate-400 uppercase font-semibold flex items-center gap-1">
+                          <Target className="w-3.5 h-3.5 text-cyan-400" />
+                          <span>Rôle Idéal Hackathon</span>
+                        </div>
+                        <div className="text-slate-200 font-sans font-semibold text-[11px] leading-snug">
+                          {prof.personality.idealRole}
+                        </div>
+                      </div>
+
+                      {/* Bug reaction */}
+                      <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1">
+                        <div className="text-[10px] text-slate-400 uppercase font-semibold flex items-center gap-1">
+                          <Bug className="w-3.5 h-3.5 text-rose-400" />
+                          <span>Réflexe Face aux Bugs</span>
+                        </div>
+                        <div className="text-slate-200 font-sans text-[11px] leading-snug">
+                          {prof.personality.bugReaction}
+                        </div>
+                      </div>
+
+                      {/* Work style */}
+                      <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1">
+                        <div className="text-[10px] text-slate-400 uppercase font-semibold flex items-center gap-1">
+                          <Zap className="w-3.5 h-3.5 text-amber-400" />
+                          <span>Style de Travail</span>
+                        </div>
+                        <div className="text-slate-200 font-sans text-[11px] leading-snug">
+                          {prof.personality.workStyle}
+                        </div>
+                      </div>
+
+                    </div>
+
+                    {/* Traits Pills */}
+                    <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                      <span className="text-[10px] font-mono text-slate-500 uppercase mr-1">Points forts :</span>
+                      {prof.personality.traits.map((trait, i) => (
+                        <span 
+                          key={i}
+                          className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-slate-950 border text-slate-300"
+                          style={{ borderColor: `${prof.personality.color}35` }}
+                        >
+                          ✦ {trait}
+                        </span>
+                      ))}
+                    </div>
+
+                    {/* 4-House Affinity Breakdown Bars */}
+                    <div className="p-3.5 rounded-xl bg-slate-950/90 border border-slate-800 space-y-2">
+                      <div className="text-[10px] font-mono uppercase text-slate-400 font-semibold">
+                        Répartition d'affinité aux 4 Maisons :
+                      </div>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        {prof.personality.breakdown.map(b => (
+                          <div key={b.slug} className="space-y-1">
+                            <div className="flex justify-between text-[10px] font-mono">
+                              <span style={{ color: b.color }} className="font-semibold truncate">{b.name}</span>
+                              <span className="text-slate-400">{b.percent}%</span>
+                            </div>
+                            <div className="w-full bg-slate-900 rounded-full h-1.5 overflow-hidden">
+                              <div 
+                                className="h-full rounded-full transition-all duration-500"
+                                style={{ width: `${b.percent}%`, backgroundColor: b.color }}
+                              ></div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Pedagogical Notice if assigned house != affinity house */}
+                    {inspectStudent.student.teamName && inspectStudent.student.teamName !== prof.personality.name && (
+                      <div className="p-3 rounded-xl bg-cyan-950/40 border border-cyan-500/30 text-xs text-slate-300 leading-relaxed">
+                        <strong className="text-cyan-300">Observation Pédagogique :</strong> Cet étudiant est affecté officiellement dans <strong className="text-white">{inspectStudent.student.teamName}</strong>, et son profil d'affinité est <strong style={{ color: prof.personality.color }}>{prof.personality.name}</strong>. C'est un profil hybride précieux qui apportera sa vision de <em>{prof.personality.title}</em> pour enrichir la dynamique de sa Maison officielle !
+                      </div>
+                    )}
+
+                  </div>
+
+                  {/* VOLET 3 : DÉTAIL DES 35 QUESTIONS (COLLAPSIBLE) */}
+                  {inspectStudent.result?.answers && inspectStudent.result.answers.length > 0 && (
+                    <div className="rounded-2xl border border-slate-800 bg-slate-950/70 overflow-hidden">
+                      <button
+                        onClick={() => setShowAnswersDetail(!showAnswersDetail)}
+                        className="w-full p-4 text-left flex items-center justify-between hover:bg-slate-900/60 transition"
+                      >
+                        <div className="flex items-center gap-2 text-xs font-mono text-slate-300 font-semibold">
+                          <BookOpen className="w-4 h-4 text-cyan-400" />
+                          <span>Détail complet des choix de l'étudiant ({inspectStudent.result.answers.length} Questions)</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-xs text-slate-400 font-mono">
+                          <span>{showAnswersDetail ? 'Masquer' : 'Afficher'}</span>
+                          {showAnswersDetail ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                        </div>
+                      </button>
+
+                      {showAnswersDetail && (
+                        <div className="p-4 border-t border-slate-800 space-y-1.5 max-h-72 overflow-y-auto">
+                          {inspectStudent.result.answers.map((ans, i) => (
+                            <div 
+                              key={i} 
+                              className="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800/80 text-xs flex items-center justify-between gap-3"
+                            >
+                              <div className="flex items-center gap-2 truncate">
+                                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 shrink-0">
+                                  Q{ans.questionId}
+                                </span>
+                                <span className="text-slate-400 font-mono text-[11px] truncate">
+                                  {ans.category} :
+                                </span>
+                                <span className="text-white font-medium truncate">
+                                  {ans.optionLabel}
+                                </span>
+                              </div>
+
+                              <div className="shrink-0 flex items-center gap-2">
+                                {ans.isCorrect === true && (
+                                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                                    ✓ Juste
+                                  </span>
+                                )}
+                                {ans.isCorrect === false && (
+                                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30">
+                                    ✗ Faux
+                                  </span>
+                                )}
+                                {ans.isCorrect === null && (
+                                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                                    ✦ Profil
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                </div>
+              )}
+
+              {/* Modal Footer */}
+              <div className="pt-4 flex items-center justify-between border-t border-slate-800">
+                <button
+                  onClick={() => handleDeleteStudent(inspectStudent.student)}
+                  className="px-3.5 py-2 rounded-xl text-xs text-rose-400 hover:text-white hover:bg-rose-950/50 border border-rose-500/30 transition flex items-center gap-1.5 font-mono"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  <span>Supprimer l'étudiant du Codex</span>
+                </button>
+
+                <button
+                  onClick={() => { setInspectStudent(null); setShowAnswersDetail(false); }}
+                  className="px-6 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-semibold transition"
+                >
+                  Fermer
+                </button>
+              </div>
+
             </div>
-
-            <div className="pt-3 flex items-center justify-between border-t border-slate-800">
-              <button
-                onClick={() => handleDeleteStudent(inspectStudent.student)}
-                className="px-3 py-1.5 rounded-lg text-xs text-rose-400 hover:text-white hover:bg-rose-950/50 border border-rose-500/30 transition flex items-center gap-1.5 font-mono"
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-                <span>Supprimer du Codex</span>
-              </button>
-
-              <button
-                onClick={() => setInspectStudent(null)}
-                className="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs"
-              >
-                Fermer
-              </button>
-            </div>
-
           </div>
-        </div>
-      )}
+        );
+      })()}
 
     </div>
   );

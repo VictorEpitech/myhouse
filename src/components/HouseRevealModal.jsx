@@ -115,7 +115,7 @@ export default function HouseRevealModal({ result, onClose }) {
             </div>
 
             <div className="text-xs font-mono text-slate-400">
-              L'algorithme a analysé vos réponses et déterminé votre profil d'ingénieur. Vous rejoignez :
+              L'algorithme a validé votre profil d'ingénieur et votre rattachement officiel. Vous rejoignez :
             </div>
 
             <h2 
@@ -129,6 +129,31 @@ export default function HouseRevealModal({ result, onClose }) {
               {house.tagline}
             </p>
 
+            {result.affinityHouse && result.affinityHouse.name && result.affinityHouse.name !== house.name && (
+              <div 
+                className="p-3 rounded-xl border flex items-center justify-between gap-3 text-xs shadow-inner"
+                style={{
+                  backgroundColor: `${result.affinityHouse.color}15`,
+                  borderColor: `${result.affinityHouse.color}40`
+                }}
+              >
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 shrink-0" style={{ color: result.affinityHouse.color }} />
+                  <span className="text-slate-300">
+                    Sensibilité & Profil de méthode : <strong className="text-white">{result.affinityHouse.name}</strong>
+                  </span>
+                </div>
+                <span 
+                  className="text-[10px] font-mono px-2 py-0.5 rounded-full uppercase font-bold shrink-0"
+                  style={{
+                    color: result.affinityHouse.color,
+                    backgroundColor: `${result.affinityHouse.color}25`
+                  }}
+                >
+                  Force pour l'équipe
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Archetype & Artifact Info */}

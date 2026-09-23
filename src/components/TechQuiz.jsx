@@ -27,7 +27,8 @@ export default function TechQuiz({ onComplete }) {
 
   // STRICT SINGLE-ATTEMPT RULE: if already completed and not admin reset, show locked view
   if (existingResult && !isAdminReset) {
-    const assignedHouse = housesData.find(h => h.name === existingResult.officialTeam) || currentUser?.house;
+    const assignedHouse = housesData.find(h => h.name === existingResult.officialTeam || h.id === currentUser?.teamId) || currentUser?.house || housesData[0];
+    const affinityHouse = housesData.find(h => h.name === existingResult.affinityHouse) || assignedHouse;
     const totalTechCount = existingResult.totalTechnicalQuestions || questionsData.filter(q => q.correctOption).length;
 
     return (
@@ -89,7 +90,7 @@ export default function TechQuiz({ onComplete }) {
               sounds.playSelect();
               onComplete({
                 officialHouse: assignedHouse,
-                affinityHouse: assignedHouse,
+                affinityHouse: affinityHouse,
                 scores: existingResult.scores,
                 correctCount: existingResult.correctCount,
                 totalTechnicalQuestions: totalTechCount
@@ -154,7 +155,7 @@ export default function TechQuiz({ onComplete }) {
     }
   };
 
-  const runAnalysisSequence = (finalScores, finalAnswers, finalCorrect) => {
+  const runAnalysisSequence = async (finalScores, finalAnswers, finalCorrect) => {
     setIsAnalyzing(true);
     sounds.playStep();
 
@@ -167,11 +168,30 @@ export default function TechQuiz({ onComplete }) {
       }
     });
 
-    const calculatedHouse = housesData.find(h => h.slug === highestHouseSlug);
-    const targetHouse = currentUser?.house || calculatedHouse;
+    const calculatedHouse = housesData.find(h => h.slug === highestHouseSlug) || housesData[0];
+
+    // Authoritative assigned baseline house: check currentUser or query DB
+    let assignedHouse = currentUser?.house;
+    if (!assignedHouse && currentUser?.email) {
+      try {
+        const res = await fetch(`/api/students/${encodeURIComponent(currentUser.email.trim().toLowerCase())}`);
+        if (res.ok) {
+          const json = await res.json();
+          if (json.data && json.data.teamId) {
+            assignedHouse = housesData.find(h => h.id === json.data.teamId || h.name === json.data.teamName);
+          }
+        }
+      } catch (err) {
+        console.warn('Could not fetch student assigned house from DB in quiz:', err);
+      }
+    }
+
+    // The official house MUST strictly be the baseline house assigned to the student.
+    // The quiz answers ONLY compute the affinity profile (calculatedHouse).
+    const targetHouse = assignedHouse || currentUser?.house || calculatedHouse;
 
     if (currentUser?.email) {
-      saveUserResult(currentUser.email, {
+      await saveUserResult(currentUser.email, {
         studentName: currentUser.fullName,
         classe: currentUser.classe,
         scores: finalScores,

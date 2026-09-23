@@ -167,12 +167,20 @@ export const saveResult = (data) => {
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
 
+  // Enforce baseline assigned house from students table if assigned
+  const student = getStudentByEmail(cleanEmail);
+  const officialTeam = (student && student.teamName && student.teamName !== 'Non assigné')
+    ? student.teamName
+    : (data.officialTeam || 'Non assigné');
+  const studentName = data.studentName || student?.fullName || 'Étudiant Epitech';
+  const classe = data.classe || student?.classe || '2031 - PGE';
+
   insert.run(
     cleanEmail,
-    data.studentName || 'Étudiant Epitech',
-    data.classe || '',
+    studentName,
+    classe,
     data.affinityHouse || '',
-    data.officialTeam || '',
+    officialTeam,
     data.correctCount || 0,
     data.totalTechnicalQuestions || 25,
     data.totalQuestions || 35,
