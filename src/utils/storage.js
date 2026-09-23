@@ -137,3 +137,72 @@ export const setActiveUserSession = (user) => {
     console.error('Error setting session:', e);
   }
 };
+
+// Fetch all students from SQLite DB (or fallback to students.json)
+export const fetchStudentsFromDB = async () => {
+  try {
+    const res = await fetch(`${API_BASE}/students`);
+    if (res.ok) {
+      const json = await res.json();
+      if (json.data && Array.isArray(json.data) && json.data.length > 0) {
+        return json.data;
+      }
+    }
+  } catch (e) {
+    console.warn('Could not fetch DB students, using local fallback:', e);
+  }
+  return null;
+};
+
+// Add or update student with house attribution in DB
+export const addStudentToDB = async (studentData) => {
+  try {
+    const res = await fetch(`${API_BASE}/students`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(studentData)
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Erreur lors de l\'enregistrement de l\'étudiant');
+    }
+    const json = await res.json();
+    return json.data;
+  } catch (e) {
+    console.error('Error adding student:', e);
+    throw e;
+  }
+};
+
+// Update student's house attribution
+export const updateStudentHouseInDB = async (email, teamId) => {
+  try {
+    const res = await fetch(`${API_BASE}/students/${encodeURIComponent(email)}/house`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ teamId })
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Erreur lors de la mise à jour de la Maison');
+    }
+    const json = await res.json();
+    return json.data;
+  } catch (e) {
+    console.error('Error updating student house:', e);
+    throw e;
+  }
+};
+
+// Delete student
+export const deleteStudentFromDB = async (email) => {
+  try {
+    const res = await fetch(`${API_BASE}/students/${encodeURIComponent(email)}`, {
+      method: 'DELETE'
+    });
+    return res.ok;
+  } catch (e) {
+    console.error('Error deleting student:', e);
+    return false;
+  }
+};

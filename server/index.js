@@ -3,7 +3,17 @@ import cors from 'cors';
 import path from 'node:path';
 import fs from 'node:fs';
 import dotenv from 'dotenv';
-import { getAllResults, getResultByEmail, saveResult, deleteResultByEmail } from './db.js';
+import { 
+  getAllResults, 
+  getResultByEmail, 
+  saveResult, 
+  deleteResultByEmail,
+  getAllStudents,
+  getStudentByEmail,
+  saveStudent,
+  updateStudentHouse,
+  deleteStudent
+} from './db.js';
 
 dotenv.config();
 
@@ -33,6 +43,10 @@ app.get('/api/config', (req, res) => {
     redirectUri: process.env.VITE_AZURE_REDIRECT_URI || process.env.AZURE_REDIRECT_URI || ''
   });
 });
+
+// ==========================================
+// RESULTS ROUTES
+// ==========================================
 
 // GET all results (for Admin Dashboard)
 app.get('/api/results', (req, res) => {
@@ -112,7 +126,99 @@ app.delete('/api/results/:email', (req, res) => {
   }
 });
 
-// Serve frontend in production
+// ==========================================
+// STUDENTS MANAGEMENT ROUTES (Admin)
+// ==========================================
+
+// GET all students
+app.get('/api/students', (req, res) => {
+  try {
+    const students = getAllStudents();
+    res.json({ success: true, count: students.length, data: students });
+  } catch (err) {
+    console.error('Error fetching students:', err);
+    res.status(500).json({ success: false, error: 'Erreur récupération des étudiants' });
+  }
+});
+
+// GET single student
+app.get('/api/students/:email', (req, res) => {
+  try {
+    const student = getStudentByEmail(req.params.email);
+    if (!student) {
+      return res.status(404).json({ success: false, error: 'Étudiant introuvable' });
+    }
+    res.json({ success: true, data: student });
+  } catch (err) {
+    console.error('Error getting student:', err);
+    res.status(500).json({ success: false, error: 'Erreur récupération étudiant' });
+  }
+});
+
+// POST create or update student with house attribution
+app.post('/api/students', (req, res) => {
+  try {
+    const { firstName, lastName, email, classe, teamId, isAdmin } = req.body;
+    if (!email) {
+      return res.status(400).json({ success: false, error: 'L\'email est obligatoire' });
+    }
+    if (!firstName || !lastName) {
+      return res.status(400).json({ success: false, error: 'Le prénom et le nom sont obligatoires' });
+    }
+
+    const saved = saveStudent({
+      firstName,
+      lastName,
+      email,
+      classe,
+      teamId,
+      isAdmin
+    });
+
+    console.log(`[Codex Admin] Étudiant enregistré: ${saved.fullName} (${saved.email}) -> Maison: ${saved.teamName}`);
+    res.status(201).json({ success: true, data: saved });
+  } catch (err) {
+    console.error('Error saving student:', err);
+    res.status(500).json({ success: false, error: err.message || 'Erreur enregistrement étudiant' });
+  }
+});
+
+// PUT update student's house attribution
+app.put('/api/students/:email/house', (req, res) => {
+  try {
+    const { email } = req.params;
+    const { teamId } = req.body;
+
+    const updated = updateStudentHouse(email, teamId);
+    if (!updated) {
+      return res.status(404).json({ success: false, error: 'Étudiant non trouvé' });
+    }
+
+    console.log(`[Codex Admin] Maison mise à jour pour ${email}: ${updated.teamName} (Team ${updated.teamId})`);
+    res.json({ success: true, data: updated });
+  } catch (err) {
+    console.error('Error updating student house:', err);
+    res.status(500).json({ success: false, error: 'Erreur mise à jour de la Maison' });
+  }
+});
+
+// DELETE student
+app.delete('/api/students/:email', (req, res) => {
+  try {
+    const { email } = req.params;
+    deleteStudent(email);
+    console.log(`[Codex Admin] Étudiant supprimé: ${email}`);
+    res.json({ success: true, message: `Étudiant ${email} supprimé` });
+  } catch (err) {
+    console.error('Error deleting student:', err);
+    res.status(500).json({ success: false, error: 'Erreur suppression étudiant' });
+  }
+});
+
+// ==========================================
+// STATIC FRONTEND SERVING
+// ==========================================
+
 const distPath = path.join(process.cwd(), 'dist');
 if (fs.existsSync(distPath)) {
   app.use(express.static(distPath));
