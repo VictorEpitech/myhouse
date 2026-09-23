@@ -90,6 +90,14 @@ export const syncStudentResultFromDB = async (email) => {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
         return json.data;
       }
+    } else if (res.status === 404) {
+      // The result does not exist on the server (e.g. was reset by admin)
+      const all = getStoredResults();
+      if (all[cleanEmail]) {
+        delete all[cleanEmail];
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
+      }
+      return null;
     }
   } catch (e) {
     console.warn('Could not sync student result from DB:', e);
@@ -99,6 +107,7 @@ export const syncStudentResultFromDB = async (email) => {
 
 // Remove result locally and in DB (Admin only)
 export const removeUserResult = async (userEmail) => {
+  if (!userEmail) return false;
   const cleanEmail = userEmail.toLowerCase().trim();
   try {
     const all = getStoredResults();
@@ -109,11 +118,13 @@ export const removeUserResult = async (userEmail) => {
   }
 
   try {
-    await fetch(`${API_BASE}/results/${encodeURIComponent(cleanEmail)}`, {
+    const res = await fetch(`${API_BASE}/results/${encodeURIComponent(cleanEmail)}`, {
       method: 'DELETE'
     });
+    return res.ok;
   } catch (e) {
     console.warn('DB delete API unreachable:', e);
+    return false;
   }
 };
 

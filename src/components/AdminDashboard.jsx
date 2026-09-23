@@ -5,6 +5,7 @@ import questionsData from '../data/questions.json';
 import { 
   getStoredResults, 
   saveUserResult, 
+  removeUserResult,
   fetchResultsFromDB, 
   fetchStudentsFromDB, 
   addStudentToDB, 
@@ -15,7 +16,7 @@ import { getStudentProfile } from '../utils/studentProfile';
 import { 
   Shield, Download, Search, Users, Award, 
   CheckCircle2, Clock, Sparkles, RefreshCw, ExternalLink,
-  UserPlus, Edit3, Trash2, Check, AlertCircle, X,
+  UserPlus, Edit3, Trash2, RotateCcw, Check, AlertCircle, X,
   ChevronDown, ChevronUp, Brain, Globe, Wrench, BookOpen, Target, Bug, Zap
 } from 'lucide-react';
 import { sounds } from '../utils/soundEffects';
@@ -192,13 +193,41 @@ export default function AdminDashboard() {
     }
   };
 
-  // Delete Student
+  // Reset Test Result for Student (allows retaking the quiz)
+  const handleResetTest = async (studentEmail, studentName) => {
+    const displayName = studentName ? `${studentName} (${studentEmail})` : studentEmail;
+    if (window.confirm(`Confirmez-vous la réinitialisation du test pour ${displayName} ?\n\nSes réponses et son score seront effacés du Codex. L'étudiant pourra repasser le rituel d'attribution.`)) {
+      sounds.playSelect();
+      await removeUserResult(studentEmail);
+      const cleanEmail = studentEmail.toLowerCase().trim();
+      setResultsData(prev => {
+        const next = { ...prev };
+        delete next[cleanEmail];
+        return next;
+      });
+      if (inspectStudent && inspectStudent.student.email.toLowerCase() === cleanEmail) {
+        setInspectStudent(prev => ({
+          ...prev,
+          result: null
+        }));
+      }
+    }
+  };
+
+  // Delete Student completely from Codex
   const handleDeleteStudent = async (student) => {
-    if (confirm(`Confirmez-vous la suppression de ${student.fullName} (${student.email}) du Codex ?`)) {
+    if (window.confirm(`Confirmez-vous la suppression définitive de ${student.fullName} (${student.email}) du Codex ?\n\nAttention : cette action supprimera l'étudiant ainsi que son résultat de test éventuel.`)) {
       sounds.playSelect();
       await deleteStudentFromDB(student.email);
-      setStudents(prev => prev.filter(s => s.email.toLowerCase() !== student.email.toLowerCase()));
-      if (inspectStudent?.student.email.toLowerCase() === student.email.toLowerCase()) {
+      await removeUserResult(student.email);
+      const cleanEmail = student.email.toLowerCase().trim();
+      setStudents(prev => prev.filter(s => s.email.toLowerCase() !== cleanEmail));
+      setResultsData(prev => {
+        const next = { ...prev };
+        delete next[cleanEmail];
+        return next;
+      });
+      if (inspectStudent?.student.email.toLowerCase() === cleanEmail) {
         setInspectStudent(null);
       }
     }
@@ -600,14 +629,23 @@ export default function AdminDashboard() {
                       <div className="flex items-center justify-end gap-1.5">
                         <button
                           onClick={() => setInspectStudent({ student, result: res })}
-                          title="Inspecter le détail"
+                          title="Inspecter le dossier"
                           className="p-1.5 rounded-lg text-slate-400 hover:text-cyan-300 hover:bg-slate-800 transition"
                         >
                           <Edit3 className="w-3.5 h-3.5" />
                         </button>
+                        {hasCompleted && (
+                          <button
+                            onClick={() => handleResetTest(student.email, student.fullName)}
+                            title="Réinitialiser le test (autorise un nouveau passage)"
+                            className="p-1.5 rounded-lg text-amber-400/80 hover:text-amber-300 hover:bg-amber-950/40 transition"
+                          >
+                            <RotateCcw className="w-3.5 h-3.5" />
+                          </button>
+                        )}
                         <button
                           onClick={() => handleDeleteStudent(student)}
-                          title="Supprimer cet étudiant"
+                          title="Supprimer définitivement cet étudiant du Codex"
                           className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-950/40 transition"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -1107,14 +1145,25 @@ export default function AdminDashboard() {
               )}
 
               {/* Modal Footer */}
-              <div className="pt-4 flex items-center justify-between border-t border-slate-800">
-                <button
-                  onClick={() => handleDeleteStudent(inspectStudent.student)}
-                  className="px-3.5 py-2 rounded-xl text-xs text-rose-400 hover:text-white hover:bg-rose-950/50 border border-rose-500/30 transition flex items-center gap-1.5 font-mono"
-                >
-                  <Trash2 className="w-4 h-4" />
-                  <span>Supprimer l'étudiant du Codex</span>
-                </button>
+              <div className="pt-4 flex flex-wrap items-center justify-between gap-3 border-t border-slate-800">
+                <div className="flex flex-wrap items-center gap-2">
+                  {prof.hasResult && (
+                    <button
+                      onClick={() => handleResetTest(inspectStudent.student.email, inspectStudent.student.fullName)}
+                      className="px-3.5 py-2 rounded-xl text-xs text-amber-400 hover:text-white hover:bg-amber-950/50 border border-amber-500/30 transition flex items-center gap-1.5 font-mono"
+                    >
+                      <RotateCcw className="w-4 h-4" />
+                      <span>Réinitialiser le test (Reset)</span>
+                    </button>
+                  )}
+                  <button
+                    onClick={() => handleDeleteStudent(inspectStudent.student)}
+                    className="px-3.5 py-2 rounded-xl text-xs text-rose-400 hover:text-white hover:bg-rose-950/50 border border-rose-500/30 transition flex items-center gap-1.5 font-mono"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    <span>Supprimer l'étudiant du Codex</span>
+                  </button>
+                </div>
 
                 <button
                   onClick={() => { setInspectStudent(null); setShowAnswersDetail(false); }}

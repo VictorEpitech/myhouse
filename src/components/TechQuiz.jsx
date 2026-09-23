@@ -3,7 +3,7 @@ import questionsData from '../data/questions.json';
 import housesData from '../data/houses.json';
 import { useAuth } from '../auth/AuthContext';
 import { sounds } from '../utils/soundEffects';
-import { saveUserResult, getStoredResults, removeUserResult } from '../utils/storage';
+import { saveUserResult, getStoredResults, removeUserResult, syncStudentResultFromDB } from '../utils/storage';
 import { Sparkles, RotateCcw, Lock, ShieldAlert, CheckCircle2 } from 'lucide-react';
 
 export default function TechQuiz({ onComplete }) {
@@ -21,22 +21,32 @@ export default function TechQuiz({ onComplete }) {
   const [analysisStep, setAnalysisStep] = useState(0);
   const [isAdminReset, setIsAdminReset] = useState(false);
 
-  // Check if current user has already taken the quiz
-  const storedResults = getStoredResults();
-  const existingResult = currentUser?.email ? storedResults[currentUser.email.toLowerCase()] : null;
+  // Check if current user has already taken the quiz (local cache + authoritative server DB)
+  const [existingResult, setExistingResult] = useState(() => {
+    const storedResults = getStoredResults();
+    return currentUser?.email ? (storedResults[currentUser.email.toLowerCase()] || null) : null;
+  });
 
-  // Synchronize local result with authoritative currentUser assigned house
+  // Verify and synchronize result with authoritative server DB on mount
   React.useEffect(() => {
-    if (currentUser?.email && existingResult) {
-      const expectedTeam = currentUser.teamName || currentUser.house?.name;
-      if (expectedTeam && expectedTeam !== 'Non assigné' && existingResult.officialTeam !== expectedTeam) {
-        saveUserResult(currentUser.email, {
-          ...existingResult,
-          officialTeam: expectedTeam
-        });
-      }
+    let isMounted = true;
+    if (currentUser?.email) {
+      syncStudentResultFromDB(currentUser.email).then(dbRes => {
+        if (!isMounted) return;
+        setExistingResult(dbRes || null);
+        if (dbRes) {
+          const expectedTeam = currentUser.teamName || currentUser.house?.name;
+          if (expectedTeam && expectedTeam !== 'Non assigné' && dbRes.officialTeam !== expectedTeam) {
+            saveUserResult(currentUser.email, {
+              ...dbRes,
+              officialTeam: expectedTeam
+            });
+          }
+        }
+      });
     }
-  }, [currentUser, existingResult]);
+    return () => { isMounted = false; };
+  }, [currentUser]);
 
   // STRICT SINGLE-ATTEMPT RULE: if already completed and not admin reset, show locked view
   if (existingResult && !isAdminReset) {
@@ -118,9 +128,10 @@ export default function TechQuiz({ onComplete }) {
 
           {currentUser?.isAdmin && (
             <button
-              onClick={() => {
+              onClick={async () => {
                 sounds.playSelect();
-                removeUserResult(currentUser.email);
+                await removeUserResult(currentUser.email);
+                setExistingResult(null);
                 setIsAdminReset(true);
               }}
               className="text-xs text-red-400 hover:text-red-300 font-mono underline p-2"

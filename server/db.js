@@ -227,8 +227,8 @@ export const saveResult = (data) => {
 
 export const deleteResultByEmail = (email) => {
   if (!email) return false;
-  const cleanEmail = email.trim().toLowerCase();
-  const query = db.prepare('DELETE FROM results WHERE email = ?');
+  const cleanEmail = decodeURIComponent(email).trim().toLowerCase();
+  const query = db.prepare('DELETE FROM results WHERE LOWER(email) = LOWER(?)');
   query.run(cleanEmail);
   return true;
 };
@@ -330,8 +330,10 @@ export const updateStudentHouse = (email, teamId) => {
 
 export const deleteStudent = (email) => {
   if (!email) return false;
-  const cleanEmail = email.trim().toLowerCase();
-  const query = db.prepare('DELETE FROM students WHERE email = ?');
+  const cleanEmail = decodeURIComponent(email).trim().toLowerCase();
+  const query = db.prepare('DELETE FROM students WHERE LOWER(email) = LOWER(?)');
   query.run(cleanEmail);
+  const queryRes = db.prepare('DELETE FROM results WHERE LOWER(email) = LOWER(?)');
+  queryRes.run(cleanEmail);
   return true;
 };
