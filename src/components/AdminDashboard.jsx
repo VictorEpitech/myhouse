@@ -208,7 +208,7 @@ export default function AdminDashboard() {
   const handleExportCSV = () => {
     sounds.playSelect();
     let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
-    csvContent += `Nom,Prénom,Email,Promotion,Maison Officielle,Score Énigmes (/${totalTechCount}),Niveau Culture Info,Logique & Algo (/9),Réseaux & Web (/4),Systèmes & Hardware (/7),Culture Tech (/5),Archétype Personnalité,Rôle Idéal Projet,Réflexe Bug,Affinité Timelords %,Affinité Gatekeepers %,Affinité CodeCrafters %,Affinité Oracles %,Date Complétion\n`;
+    csvContent += `Nom,Prénom,Email,Promotion,Maison Officielle,Score Énigmes (/${totalTechCount}),Niveau Culture Info,Logique & Algo (/9),Réseaux & Web (/4),Systèmes & Hardware (/7),Culture Tech (/5),Archétype Personnalité,Rôle Idéal Projet,Réflexe Bug,DevOps %,Sécurité %,Prototypage %,Data %,Date Complétion\n`;
 
     students.filter(s => !s.isAdmin).forEach(s => {
       const res = resultsData[s.email.toLowerCase()] || null;
@@ -476,7 +476,7 @@ export default function AdminDashboard() {
                 <th className="p-4">Promotion</th>
                 <th className="p-4">Maison Attribuée</th>
                 <th className="p-4">Score Énigmes (/{totalTechCount})</th>
-                <th className="p-4">Profil d'Affinité</th>
+                <th className="p-4">Type de Personnalité</th>
                 <th className="p-4 text-center">Statut Test</th>
                 <th className="p-4 text-right">Actions</th>
               </tr>
@@ -555,7 +555,7 @@ export default function AdminDashboard() {
                       )}
                     </td>
 
-                    {/* Affinity & Archetype */}
+                    {/* Type de Personnalité */}
                     <td className="p-4">
                       {hasCompleted ? (
                         (() => {
@@ -567,10 +567,12 @@ export default function AdminDashboard() {
                                 style={{ color: prof.personality.color }}
                               >
                                 <span>{prof.personality.icon}</span>
-                                <span>{res.affinityHouse || prof.personality.name}</span>
+                                <span className="truncate max-w-[160px]" title={prof.personality.title}>
+                                  {prof.personality.title}
+                                </span>
                               </span>
-                              <div className="text-[10px] text-slate-400 truncate max-w-[140px]" title={prof.personality.title}>
-                                {prof.personality.title}
+                              <div className="text-[10px] text-slate-400 truncate max-w-[160px]" title={prof.personality.subtitle}>
+                                {prof.personality.subtitle}
                               </div>
                             </div>
                           );
@@ -952,7 +954,7 @@ export default function AdminDashboard() {
                         }}
                       >
                         <Sparkles className="w-3.5 h-3.5" />
-                        Affinité : {prof.personality.name}
+                        Profil Comportemental
                       </span>
                     </div>
 
@@ -1016,16 +1018,16 @@ export default function AdminDashboard() {
                       ))}
                     </div>
 
-                    {/* 4-House Affinity Breakdown Bars */}
+                    {/* Sensibilités méthodologiques */}
                     <div className="p-3.5 rounded-xl bg-slate-950/90 border border-slate-800 space-y-2">
                       <div className="text-[10px] font-mono uppercase text-slate-400 font-semibold">
-                        Répartition d'affinité aux 4 Maisons :
+                        Sensibilités méthodologiques :
                       </div>
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                         {prof.personality.breakdown.map(b => (
                           <div key={b.slug} className="space-y-1">
                             <div className="flex justify-between text-[10px] font-mono">
-                              <span style={{ color: b.color }} className="font-semibold truncate">{b.name}</span>
+                              <span style={{ color: b.color }} className="font-semibold truncate">{b.label}</span>
                               <span className="text-slate-400">{b.percent}%</span>
                             </div>
                             <div className="w-full bg-slate-900 rounded-full h-1.5 overflow-hidden">
@@ -1038,13 +1040,6 @@ export default function AdminDashboard() {
                         ))}
                       </div>
                     </div>
-
-                    {/* Pedagogical Notice if assigned house != affinity house */}
-                    {inspectStudent.student.teamName && inspectStudent.student.teamName !== prof.personality.name && (
-                      <div className="p-3 rounded-xl bg-cyan-950/40 border border-cyan-500/30 text-xs text-slate-300 leading-relaxed">
-                        <strong className="text-cyan-300">Observation Pédagogique :</strong> Cet étudiant est affecté officiellement dans <strong className="text-white">{inspectStudent.student.teamName}</strong>, et son profil d'affinité est <strong style={{ color: prof.personality.color }}>{prof.personality.name}</strong>. C'est un profil hybride précieux qui apportera sa vision de <em>{prof.personality.title}</em> pour enrichir la dynamique de sa Maison officielle !
-                      </div>
-                    )}
 
                   </div>
 

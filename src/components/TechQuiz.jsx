@@ -25,10 +25,25 @@ export default function TechQuiz({ onComplete }) {
   const storedResults = getStoredResults();
   const existingResult = currentUser?.email ? storedResults[currentUser.email.toLowerCase()] : null;
 
+  // Synchronize local result with authoritative currentUser assigned house
+  React.useEffect(() => {
+    if (currentUser?.email && existingResult) {
+      const expectedTeam = currentUser.teamName || currentUser.house?.name;
+      if (expectedTeam && expectedTeam !== 'Non assigné' && existingResult.officialTeam !== expectedTeam) {
+        saveUserResult(currentUser.email, {
+          ...existingResult,
+          officialTeam: expectedTeam
+        });
+      }
+    }
+  }, [currentUser, existingResult]);
+
   // STRICT SINGLE-ATTEMPT RULE: if already completed and not admin reset, show locked view
   if (existingResult && !isAdminReset) {
-    const assignedHouse = housesData.find(h => h.name === existingResult.officialTeam || h.id === currentUser?.teamId) || currentUser?.house || housesData[0];
-    const affinityHouse = housesData.find(h => h.name === existingResult.affinityHouse) || assignedHouse;
+    const assignedHouse = currentUser?.house || 
+      housesData.find(h => h.id === currentUser?.teamId || h.name === currentUser?.teamName) ||
+      housesData.find(h => h.name === existingResult.officialTeam) ||
+      housesData[0];
     const totalTechCount = existingResult.totalTechnicalQuestions || questionsData.filter(q => q.correctOption).length;
 
     return (
@@ -77,8 +92,8 @@ export default function TechQuiz({ onComplete }) {
 
           <div className="flex justify-between items-center text-xs">
             <span className="text-slate-400 font-mono">Affectation officielle :</span>
-            <span className="text-cyan-400 font-mono font-bold">
-              {existingResult.officialTeam || currentUser?.teamName || 'Enregistrée'}
+            <span className="font-mono font-bold" style={{ color: assignedHouse.color }}>
+              {assignedHouse.name}
             </span>
           </div>
         </div>
@@ -90,7 +105,6 @@ export default function TechQuiz({ onComplete }) {
               sounds.playSelect();
               onComplete({
                 officialHouse: assignedHouse,
-                affinityHouse: affinityHouse,
                 scores: existingResult.scores,
                 correctCount: existingResult.correctCount,
                 totalTechnicalQuestions: totalTechCount
@@ -197,7 +211,6 @@ export default function TechQuiz({ onComplete }) {
         scores: finalScores,
         correctCount: finalCorrect,
         totalTechnicalQuestions: questionsData.filter(q => q.correctOption).length,
-        affinityHouse: calculatedHouse?.name,
         officialTeam: targetHouse?.name,
         totalQuestions: questionsData.length,
         answers: finalAnswers
@@ -225,7 +238,6 @@ export default function TechQuiz({ onComplete }) {
           sounds.playHouseReveal();
           onComplete({
             officialHouse: targetHouse,
-            affinityHouse: calculatedHouse,
             scores: finalScores,
             correctCount: finalCorrect
           });

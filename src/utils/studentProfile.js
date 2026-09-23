@@ -78,8 +78,6 @@ export const CULTURE_LEVELS = [
 export const ARCHETYPES = {
   timelords: {
     slug: 'timelords',
-    name: 'Les Timelords',
-    number: 'Maison 1',
     color: '#4da3ff',
     title: "L'Orchestrateur & Maître du Temps",
     subtitle: 'DevOps, Résilience & Méthodologie',
@@ -92,10 +90,8 @@ export const ARCHETYPES = {
   },
   gatekeepers: {
     slug: 'gatekeepers',
-    name: 'Les Gatekeepers',
-    number: 'Maison 2',
     color: '#a855f7',
-    title: "Le Protecteur & Audacieux de l'Ombre",
+    title: "Le Protecteur & Audacieux",
     subtitle: 'Cybersécurité, Rétro-ingénierie & Rigueur',
     icon: '🛡️',
     idealRole: 'Lead DevSecOps & Chasseur de Vulnérabilités / Pentest',
@@ -106,10 +102,8 @@ export const ARCHETYPES = {
   },
   codecrafters: {
     slug: 'codecrafters',
-    name: 'The CodeCrafters',
-    number: 'Maison 3',
     color: '#a3e635',
-    title: "Le Bâtisseur & Maker Pragmatique",
+    title: "Le Bâtisseur & Maker",
     subtitle: 'Développement Logiciel, Prototypage & Innovation',
     icon: '⚡',
     idealRole: 'Lead Prototypage, Bâtisseur de Features & Full-Stack',
@@ -120,10 +114,8 @@ export const ARCHETYPES = {
   },
   oracles: {
     slug: 'oracles',
-    name: 'The Oracles',
-    number: 'Maison 4',
     color: '#ff5a5a',
-    title: "L'Analyste & Visionnaire des Systèmes",
+    title: "L'Analyste & Visionnaire",
     subtitle: 'Data Science, Algorithmie Avancée & Architecture',
     icon: '🔮',
     idealRole: 'Architecte Logiciel & Spécialiste Données / Algorithmes',
@@ -145,7 +137,25 @@ export function getStudentProfile(result, student) {
       hasResult: false,
       studentName: student?.fullName || 'Étudiant',
       officialHouseName: student?.teamName || 'Non assigné',
-      classe: student?.classe || '2031 - PGE'
+      classe: student?.classe || '2031 - PGE',
+      culture: {
+        score: 0,
+        total: 25,
+        percent: 0,
+        level: CULTURE_LEVELS[CULTURE_LEVELS.length - 1],
+        domains: Object.values(DOMAINS).map(d => ({ ...d, score: 0, total: d.questionIds.length, percent: 0 }))
+      },
+      personality: {
+        title: 'Non calculé',
+        subtitle: 'En attente du test',
+        icon: '⏳',
+        color: '#64748b',
+        idealRole: 'Non défini',
+        bugReaction: 'Non défini',
+        workStyle: 'Non défini',
+        traits: [],
+        breakdown: []
+      }
     };
   }
 
@@ -204,24 +214,15 @@ export function getStudentProfile(result, student) {
     }
   });
 
-  // Check if result had affinityHouse string (e.g. "Les Gatekeepers")
-  if (result.affinityHouse) {
-    const match = Object.values(ARCHETYPES).find(a => 
-      a.name.toLowerCase() === result.affinityHouse.toLowerCase() ||
-      result.affinityHouse.toLowerCase().includes(a.slug)
-    );
-    if (match) dominantSlug = match.slug;
-  }
-
   const archetype = ARCHETYPES[dominantSlug] || ARCHETYPES.timelords;
 
   // Compute breakdown %
   const totalScore = Object.values(scores).reduce((a, b) => a + (Number(b) || 0), 0) || 1;
   const breakdown = [
-    { slug: 'timelords', name: 'Les Timelords', count: scores.timelords || 0, percent: Math.round(((scores.timelords || 0) / totalScore) * 100), color: '#4da3ff' },
-    { slug: 'gatekeepers', name: 'Les Gatekeepers', count: scores.gatekeepers || 0, percent: Math.round(((scores.gatekeepers || 0) / totalScore) * 100), color: '#a855f7' },
-    { slug: 'codecrafters', name: 'The CodeCrafters', count: scores.codecrafters || 0, percent: Math.round(((scores.codecrafters || 0) / totalScore) * 100), color: '#a3e635' },
-    { slug: 'oracles', name: 'The Oracles', count: scores.oracles || 0, percent: Math.round(((scores.oracles || 0) / totalScore) * 100), color: '#ff5a5a' }
+    { slug: 'timelords', label: 'DevOps & Résilience', count: scores.timelords || 0, percent: Math.round(((scores.timelords || 0) / totalScore) * 100), color: '#4da3ff' },
+    { slug: 'gatekeepers', label: 'Sécurité & Audit', count: scores.gatekeepers || 0, percent: Math.round(((scores.gatekeepers || 0) / totalScore) * 100), color: '#a855f7' },
+    { slug: 'codecrafters', label: 'Prototypage & Code', count: scores.codecrafters || 0, percent: Math.round(((scores.codecrafters || 0) / totalScore) * 100), color: '#a3e635' },
+    { slug: 'oracles', label: 'Data & Architecture', count: scores.oracles || 0, percent: Math.round(((scores.oracles || 0) / totalScore) * 100), color: '#ff5a5a' }
   ];
 
   // Specific personality question answers

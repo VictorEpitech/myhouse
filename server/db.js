@@ -93,18 +93,47 @@ const seedStudentsIfEmpty = () => {
 
 seedStudentsIfEmpty();
 
+// Auto-sync any existing results with the student's official assigned house from students table
+const syncResultsWithStudents = () => {
+  try {
+    db.exec(`
+      UPDATE results 
+      SET official_team = (
+        SELECT team_name 
+        FROM students 
+        WHERE LOWER(students.email) = LOWER(results.email)
+      )
+      WHERE EXISTS (
+        SELECT 1 
+        FROM students 
+        WHERE LOWER(students.email) = LOWER(results.email) 
+        AND students.team_name IS NOT NULL 
+        AND students.team_name != 'Non assigné'
+      );
+    `);
+  } catch (err) {
+    console.warn('[Database] Sync notice:', err);
+  }
+};
+
+syncResultsWithStudents();
+
 // --- RESULTS FUNCTIONS ---
 
 export const getAllResults = () => {
-  const query = db.prepare('SELECT * FROM results ORDER BY completed_at DESC');
+  const query = db.prepare(`
+    SELECT r.*, s.team_name as assigned_team_name 
+    FROM results r
+    LEFT JOIN students s ON LOWER(r.email) = LOWER(s.email)
+    ORDER BY r.completed_at DESC
+  `);
   const rows = query.all();
   return rows.map(r => ({
     id: r.id,
     email: r.email,
     studentName: r.student_name,
     classe: r.classe,
-    affinityHouse: r.affinity_house,
-    officialTeam: r.official_team,
+    officialTeam: (r.assigned_team_name && r.assigned_team_name !== 'Non assigné') ? r.assigned_team_name : r.official_team,
     correctCount: r.correct_count,
     totalTechnicalQuestions: r.total_technical_questions,
     totalQuestions: r.total_questions,
@@ -117,7 +146,12 @@ export const getAllResults = () => {
 export const getResultByEmail = (email) => {
   if (!email) return null;
   const cleanEmail = email.trim().toLowerCase();
-  const query = db.prepare('SELECT * FROM results WHERE email = ?');
+  const query = db.prepare(`
+    SELECT r.*, s.team_name as assigned_team_name 
+    FROM results r
+    LEFT JOIN students s ON LOWER(r.email) = LOWER(s.email)
+    WHERE LOWER(r.email) = ?
+  `);
   const r = query.get(cleanEmail);
   if (!r) return null;
   return {
@@ -125,8 +159,7 @@ export const getResultByEmail = (email) => {
     email: r.email,
     studentName: r.student_name,
     classe: r.classe,
-    affinityHouse: r.affinity_house,
-    officialTeam: r.official_team,
+    officialTeam: (r.assigned_team_name && r.assigned_team_name !== 'Non assigné') ? r.assigned_team_name : r.official_team,
     correctCount: r.correct_count,
     totalTechnicalQuestions: r.total_technical_questions,
     totalQuestions: r.total_questions,
